@@ -2,13 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { AnimatePresence, motion } from "motion/react";
-import { ChevronDown, ChevronsUpDown, Droplet, Layers, LogOut, Moon, MousePointerClick, PanelLeftClose, PanelLeftOpen, Search, Settings2, UserRound } from "lucide-react";
+import { ChevronDown, ChevronsUpDown, Droplet, LogOut, Moon, MousePointerClick, PanelLeftClose, PanelLeftOpen, Search, Settings2, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { cn, iniciais } from "@/lib/utils";
 import { aplicarDesfoque, desfoqueReduzido } from "@/lib/desfoque";
 import { MOLA } from "@/tema/movimento";
 import { useJanelaEstreita } from "@/componentes/ui/pecas";
-import { SECOES, type IrPara } from "./telas";
+import { secoesDoUsuario } from "./modulos";
+
+/** Nome do sistema embaixo do logo (no Plus: «Sistema Contábil»). Troque pelo do seu sistema. */
+export const NOME_SISTEMA = "Meu Sistema";
 
 function lerSalvo<T>(chave: string, padrao: T): T {
   try {
@@ -30,7 +33,8 @@ const ABERTO = 256;
 const FECHADO = 72;
 
 /**
- * MENU LATERAL.
+ * MENU LATERAL — o mesmo do Plus (frontend/src/componentes/layout/MenuLateral.tsx), sem as
+ * janelas e contadores que dependem dos módulos de lá (Novidades, Sugestões, Seu dia, e-mail).
  * - Marca no topo; busca (Ctrl+K); seções com título em caixa alta que DOBRAM com um clique
  *   (e o menu lembra quais ficaram dobradas).
  * - Item ativo: pílula clara que DESLIZA de um item ao outro (layoutId) + barrinha da marca à esquerda.
@@ -40,11 +44,11 @@ const FECHADO = 72;
  * - Embaixo, a conta: menu com preferências (tema, menu automático, reduzir desfoque) e sair.
  *   SEM LOGIN: não passe `usuario` nem `aoSair` — vira um botão «Preferências» com o mesmo menu.
  */
-export function MenuLateral({ usuario, tela, tema, aoIr, aoTrocarTema, aoSair }: {
-  usuario?: { nome: string; cargo: string };
-  tela: string;
+export function MenuLateral({ usuario, modulo, tema, aoIr, aoTrocarTema, aoSair }: {
+  usuario?: { nome: string; cargo: string; perfil: string };
+  modulo: string;
   tema: "claro" | "escuro";
-  aoIr: IrPara;
+  aoIr: (chave: string) => void;
   aoTrocarTema: () => void;
   aoSair?: () => void;
 }) {
@@ -106,7 +110,7 @@ export function MenuLateral({ usuario, tela, tema, aoIr, aoTrocarTema, aoSair }:
           onMouseLeave={automatico ? saiu : undefined}
           className={cn(
             "absolute inset-y-0 left-0 flex flex-col overflow-hidden bg-menu text-tinta transition-shadow",
-            automatico && !recolhido && "shadow-janela",
+            automatico && !recolhido && "shadow-[0_30px_80px_-20px_rgba(0,0,0,0.45)]",
           )}
         >
           {/* brilho suave nos cantos, como o vidro do macOS */}
@@ -127,21 +131,22 @@ export function MenuLateral({ usuario, tela, tema, aoIr, aoTrocarTema, aoSair }:
                   aria-label="Abrir o menu"
                   className="group relative flex h-12 w-[52px] items-center justify-center rounded-xl transition hover:bg-tinta/[0.08]"
                 >
-                  <Marca className="transition duration-200 group-hover:scale-90 group-hover:opacity-0" />
+                  <img src="/logo_simbolo.png" alt="UP Contábil" draggable={false} className="hidden w-[42px] transition duration-200 group-hover:scale-90 group-hover:opacity-0 dark:block" />
+                  <img src="/logo_simbolo_escura.png" alt="UP Contábil" draggable={false} className="w-[42px] transition duration-200 group-hover:scale-90 group-hover:opacity-0 dark:hidden" />
                   <PanelLeftOpen className="absolute size-5 text-tinta/80 opacity-0 transition duration-200 group-hover:opacity-100" />
                 </motion.button>
               ) : (
-                <motion.div key="cheio" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-1 items-center gap-2.5">
-                  <Marca />
-                  <div className="leading-tight">
-                    <p className="text-[14px] font-semibold tracking-tight">Meu Sistema</p>
-                    <p className="text-[9.5px] font-medium uppercase tracking-[0.22em] text-tinta/55">Modelo visual</p>
+                <motion.div key="cheio" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-1 items-center justify-center">
+                  <div className="flex flex-col items-center">
+                    <img src="/logo_simbolo.png" alt="UP" className="hidden h-7 opacity-95 dark:block" draggable={false} />
+                    <img src="/logo_simbolo_escura.png" alt="UP" className="h-7 opacity-90 dark:hidden" draggable={false} />
+                    <span className="mt-1.5 text-[9.5px] font-medium uppercase tracking-[0.26em] text-tinta/65 dark:text-tinta/55">{NOME_SISTEMA}</span>
                   </div>
                   <button
                     onClick={alternar}
                     title="Recolher o menu (Ctrl+B)"
                     aria-label="Recolher o menu"
-                    className="ml-auto rounded-lg p-1.5 text-tinta/35 transition hover:bg-tinta/10 hover:text-tinta"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-tinta/35 transition hover:bg-tinta/10 hover:text-tinta"
                   >
                     <PanelLeftClose className="size-[18px]" />
                   </button>
@@ -174,9 +179,9 @@ export function MenuLateral({ usuario, tela, tema, aoIr, aoTrocarTema, aoSair }:
 
           {/* seções */}
           <nav className="relative flex-1 overflow-y-auto overflow-x-hidden px-3 pb-3 [scrollbar-width:none]">
-            {SECOES.map((s) => {
+            {secoesDoUsuario(usuario).map((s) => {
               const dobrada = !recolhido && dobradas.includes(s.titulo);
-              const temAtivo = s.telas.some((t) => t.chave === tela);
+              const temAtivo = s.modulos.some((m) => m.chave === modulo);
               return (
                 <div key={s.titulo} className="mt-2">
                   {recolhido ? (
@@ -187,19 +192,19 @@ export function MenuLateral({ usuario, tela, tema, aoIr, aoTrocarTema, aoSair }:
                       className="group flex h-8 w-full items-center gap-1 rounded-lg px-3 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-tinta/65 transition hover:text-tinta/80 dark:text-tinta/45"
                     >
                       {s.titulo}
-                      {dobrada && temAtivo && <span className="ml-1.5 size-1.5 rounded-full bg-marca" />}
+                      {dobrada && temAtivo && <span className="ml-1.5 size-1.5 rounded-full bg-destaque" />}
                       <ChevronDown className={cn("ml-auto size-3.5 opacity-0 transition group-hover:opacity-100", dobrada && "-rotate-90 opacity-100")} />
                     </button>
                   )}
                   <motion.div initial={false} animate={{ height: dobrada ? 0 : "auto", opacity: dobrada ? 0 : 1 }} transition={MOLA} className="overflow-hidden">
                     <div className="flex flex-col gap-0.5">
-                      {s.telas.map((t) => {
-                        const ativo = t.chave === tela;
+                      {s.modulos.map((m) => {
+                        const ativo = m.chave === modulo;
                         return (
-                          <DicaMenu key={t.chave} texto={t.nome} ativa={recolhido}>
+                          <DicaMenu key={m.chave} texto={m.nome} ativa={recolhido}>
                             <button
-                              onClick={() => aoIr(t.chave)}
-                              aria-label={t.nome}
+                              onClick={() => aoIr(m.chave)}
+                              aria-label={m.nome}
                               aria-current={ativo ? "page" : undefined}
                               className={cn(
                                 "group relative flex h-10 w-full items-center gap-3 rounded-xl px-3 text-[14px] outline-none transition-colors",
@@ -211,29 +216,29 @@ export function MenuLateral({ usuario, tela, tema, aoIr, aoTrocarTema, aoSair }:
                                 <motion.span
                                   layoutId="menu-ativo"
                                   transition={MOLA}
-                                  className="absolute inset-0 rounded-xl bg-[var(--menu-ativo)] shadow-[var(--menu-ativo-sombra)]"
+                                  className="absolute inset-0 rounded-xl bg-white/80 shadow-[0_1px_2px_rgba(60,45,30,0.08),0_6px_16px_-10px_rgba(60,45,30,0.35)] dark:bg-transparent dark:bg-gradient-to-b dark:from-white/[0.16] dark:to-white/[0.09] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_6px_16px_-8px_rgba(0,0,0,0.6)]"
                                 />
                               ) : (
                                 <span className="absolute inset-0 rounded-xl bg-tinta/0 transition group-hover:bg-tinta/[0.05]" />
                               )}
                               {ativo && !recolhido && (
-                                <motion.span layoutId="menu-barra" transition={MOLA} className="absolute -left-3 top-2.5 h-5 w-[3px] rounded-r-full bg-marca" />
+                                <motion.span layoutId="menu-barra" transition={MOLA} className="absolute -left-3 top-2.5 h-5 w-[3px] rounded-r-full bg-destaque" />
                               )}
-                              <t.icone className={cn("relative size-[19px] shrink-0 transition-transform group-active:scale-90", ativo && "text-marca")} strokeWidth={ativo ? 2 : 1.75} />
-                              {!recolhido && <span className={cn("relative truncate", ativo && "font-medium")}>{t.nome}</span>}
-                              {!!t.contador &&
+                              <m.icone className={cn("relative size-[19px] shrink-0 transition-transform group-active:scale-90", ativo && "text-destaque")} strokeWidth={ativo ? 2 : 1.75} />
+                              {!recolhido && <span className={cn("relative truncate", ativo && "font-medium")}>{m.nome}</span>}
+                              {!!m.contador &&
                                 (recolhido ? (
-                                  <span className="absolute right-1.5 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-marca px-1 text-[9.5px] font-semibold tabular-nums text-menu">
-                                    {t.contador}
+                                  <span className="absolute right-1.5 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-destaque px-1 text-[9.5px] font-semibold tabular-nums text-white dark:text-[#1b1a18]">
+                                    {m.contador}
                                   </span>
                                 ) : (
                                   <span
                                     className={cn(
                                       "relative ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-semibold tabular-nums",
-                                      ativo ? "bg-marca text-menu" : "bg-tinta/[0.08] text-tinta/75",
+                                      ativo ? "bg-destaque text-white dark:text-[#1b1a18]" : "bg-tinta/[0.08] text-tinta/75",
                                     )}
                                   >
-                                    {t.contador}
+                                    {m.contador}
                                   </span>
                                 ))}
                             </button>
@@ -259,7 +264,7 @@ export function MenuLateral({ usuario, tela, tema, aoIr, aoTrocarTema, aoSair }:
                   )}
                 >
                   {usuario ? (
-                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-acento text-[13px] font-semibold text-sobre-acento ring-2 ring-tinta/15">
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-verde text-[13px] font-semibold text-white ring-2 ring-tinta/15">
                       {iniciais(usuario.nome)}
                     </div>
                   ) : (
@@ -281,7 +286,7 @@ export function MenuLateral({ usuario, tela, tema, aoIr, aoTrocarTema, aoSair }:
                   side={recolhido ? "right" : "top"}
                   align={recolhido ? "end" : "start"}
                   sideOffset={10}
-                  className="z-50 w-[256px] rounded-2xl border border-borda bg-superficie p-1.5 text-texto shadow-pop"
+                  className="z-50 w-[256px] rounded-2xl border border-borda bg-superficie p-1.5 text-texto shadow-[0_20px_50px_-15px_rgba(0,0,0,0.35)]"
                 >
                   {usuario && (
                     <>
@@ -332,18 +337,6 @@ export function MenuLateral({ usuario, tela, tema, aoIr, aoTrocarTema, aoSair }:
   );
 }
 
-/** Marca genérica: troque pelo logo (dois arquivos: um para o tema claro, outro para o escuro). */
-export function Marca({ className, tamanho = 34 }: { className?: string; tamanho?: number }) {
-  return (
-    <span
-      className={cn("flex shrink-0 items-center justify-center rounded-xl bg-tinta text-menu shadow-sm", className)}
-      style={{ width: tamanho, height: tamanho }}
-    >
-      <Layers style={{ width: tamanho * 0.55, height: tamanho * 0.55 }} strokeWidth={2} />
-    </span>
-  );
-}
-
 function ItemConta({ icone: Icone, texto, marcado, aoClicar }: {
   icone: typeof Moon;
   texto: string;
@@ -357,7 +350,7 @@ function ItemConta({ icone: Icone, texto, marcado, aoClicar }: {
         <Icone className="size-4 shrink-0 text-texto-2" />
         <span className="flex-1 whitespace-nowrap">{texto}</span>
         {marcado !== undefined && (
-          <span className={cn("flex h-[18px] w-[30px] shrink-0 items-center rounded-full p-0.5 transition", marcado ? "bg-acento" : "bg-borda")}>
+          <span className={cn("flex h-[18px] w-[30px] shrink-0 items-center rounded-full p-0.5 transition", marcado ? "bg-verde" : "bg-borda")}>
             <span className={cn("size-[14px] rounded-full bg-white shadow transition", marcado && "translate-x-3")} />
           </span>
         )}
@@ -373,9 +366,9 @@ function DicaMenu({ texto, ativa, children }: { texto: string; ativa: boolean; c
     <Tooltip.Root>
       <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
       <Tooltip.Portal>
-        <Tooltip.Content side="right" sideOffset={12} className="z-50 rounded-lg bg-texto px-2.5 py-1.5 text-[12.5px] font-medium text-superficie shadow-pop">
+        <Tooltip.Content side="right" sideOffset={12} className="z-50 rounded-lg bg-[#1b1a18] px-2.5 py-1.5 text-[12.5px] font-medium text-white shadow-lg">
           {texto}
-          <Tooltip.Arrow className="fill-texto" />
+          <Tooltip.Arrow className="fill-[#1b1a18]" />
         </Tooltip.Content>
       </Tooltip.Portal>
     </Tooltip.Root>

@@ -79,7 +79,7 @@ export const temJanela = () => MODO_NAVEGADOR || NA_JANELA || ponteDaJanela() !=
 /** Abre um link no navegador do Windows (na janela) ou numa aba nova (no navegador). */
 export async function abrirLink(endereco: string) {
   const url = /^www\./i.test(endereco) ? `https://${endereco}` : endereco;
-  if (!/^https?:\/\//i.test(url)) return; // só http/https: nunca javascript:, file:...
+  if (!/^https?:\/\//i.test(url)) return; // ★ 21/10/2026 (auditoria A12): nunca javascript:, file:...
   const p = MODO_NAVEGADOR ? null : await ponte();
   if (!p) {
     window.open(url, "_blank", "noopener");

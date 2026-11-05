@@ -1,5 +1,5 @@
 // Tira as FOTOS e as ANIMAÇÕES (GIF) do guia a partir da vitrine, usando o Edge já instalado no Windows.
-// Uso: npm run build && npx vite preview --port 4173   (em outro terminal)
+// Uso: npm run build && npx vite preview --port 4173   (em outro terminal; abre as telas sem Python)
 //      npm run fotos                                     -> grava em ../../imagens
 // Serve também para a pessoa fotografar o SEU sistema depois da cirurgia (troque as telas abaixo).
 import { chromium } from "playwright-core";
@@ -14,7 +14,7 @@ const TAM = { width: 1440, height: 900 };
 
 const TELAS = [
   ["painel", "painel"],
-  ["lista", "cadastro-cartoes"],
+  ["cadastro", "cadastro-cartoes"],
   ["tabela", "tabela"],
   ["formulario", "formulario"],
   ["pecas", "pecas"],
@@ -50,7 +50,7 @@ async function fotos(navegador, tema) {
   }
 
   // cadastro em lista e a ficha lateral
-  await p.goto(`${BASE}/?tela=lista`);
+  await p.goto(`${BASE}/?tela=cadastro`);
   await espera(600);
   await p.locator("main button:has(svg.lucide-list)").click();
   await foto("cadastro-lista");
@@ -157,9 +157,9 @@ async function videos(navegador) {
       await p.locator(`nav button[aria-label="${nome}"]`).click();
       await espera(800);
     }
-    await p.locator("nav button", { hasText: "Principal" }).click(); // dobra a seção
+    await p.locator("nav button", { hasText: "Gestão" }).click(); // dobra a seção
     await espera(800);
-    await p.locator("nav button", { hasText: "Principal" }).click();
+    await p.locator("nav button", { hasText: "Gestão" }).click();
     await espera(800);
     await p.keyboard.press("Control+b");
     await espera(1000);
@@ -167,7 +167,7 @@ async function videos(navegador) {
     await espera(1200);
   });
 
-  await gravar("ficha-e-janela", `${BASE}/?tela=lista`, async (p) => {
+  await gravar("ficha-e-janela", `${BASE}/?tela=cadastro`, async (p) => {
     await espera(1500);
     await p.locator("main [role=button]").nth(1).hover();
     await espera(600);
@@ -181,7 +181,7 @@ async function videos(navegador) {
     await espera(1000);
   });
 
-  await gravar("busca-e-segmentado", `${BASE}/?tela=lista`, async (p) => {
+  await gravar("busca-e-segmentado", `${BASE}/?tela=cadastro`, async (p) => {
     await espera(1200);
     await p.getByRole("button", { name: "Em aberto" }).click();
     await espera(700);
@@ -196,42 +196,15 @@ async function videos(navegador) {
   });
 }
 
-/** Cada estilo pronto (estilos-prontos/*.css) aplicado por cima da vitrine, claro e escuro. */
-async function estilos(navegador) {
-  const pastaCss = path.resolve(import.meta.dirname, "../../../estilos-prontos");
-  const pasta = path.join(SAIDA, "estilos");
-  fs.mkdirSync(pasta, { recursive: true });
-  for (const arq of fs.readdirSync(pastaCss).filter((a) => a.endsWith(".css"))) {
-    const css = fs.readFileSync(path.join(pastaCss, arq), "utf-8");
-    const nome = arq.replace(".css", "");
-    for (const tema of ["claro", "escuro"]) {
-      const ctx = await abrir(navegador, tema);
-      const p = await ctx.newPage();
-      for (const [tela, foto] of [["painel", "painel"], ["lista", "cadastro"]]) {
-        await p.goto(`${BASE}/?tela=${tela}`);
-        await p.addStyleTag({ content: css });
-        await espera(900);
-        await p.screenshot({ path: path.join(pasta, `${nome}-${tema}-${foto}.png`) });
-        console.log(`  estilos/${nome}-${tema}-${foto}.png`);
-      }
-      await ctx.close();
-    }
-  }
-}
-
 const navegador = await chromium.launch({ channel: "msedge" });
 try {
-  // SO=fotos | SO=animacoes | SO=estilos  -> só uma parte (sem SO: tudo)
+  // SO=fotos | SO=animacoes  -> só uma parte (sem SO: tudo)
   const so = process.env.SO;
   if (!so || so === "fotos")
     for (const tema of ["claro", "escuro"]) {
       console.log(`Fotos (${tema})`);
       await fotos(navegador, tema);
     }
-  if (!so || so === "estilos") {
-    console.log("Estilos prontos");
-    await estilos(navegador);
-  }
   if (!so || so === "animacoes") {
     console.log("Animações");
     await videos(navegador);

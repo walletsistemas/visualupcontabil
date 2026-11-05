@@ -53,12 +53,12 @@ export const ROTULO_SITUACAO: Record<Situacao, string> = {
   pendente: "Pendente",
 };
 
-/** Cada situação tem uma cor fixa de gráfico (tokens --g-*). */
+/** Cada situação tem a cor fixa do Plus (--st-* para situação, --tp-* para tipo). */
 export const COR_SITUACAO: Record<Situacao, string> = {
-  concluido: "var(--g-1)",
-  andamento: "var(--g-5)",
-  atrasado: "var(--g-3)",
-  pendente: "var(--g-4)",
+  concluido: "var(--st-prazo)",
+  andamento: "var(--tp-rotina)",
+  atrasado: "var(--st-vencida)",
+  pendente: "var(--st-aberta)",
 };
 
 export const PESSOAS_EXEMPLO = PESSOAS;

@@ -1,11 +1,123 @@
+/*
+  COPIADO DO SISTEMA CONTÁBIL PLUS (frontend/src/index.css) — é o PADRÃO do escritório.
+  Não mude cores, nomes nem medidas aqui: o que muda no Plus, muda aqui (e vice-versa).
+  Ficaram de fora só as regras de uma tela do Plus (barras da Escrituração, relatório em PDF).
+*/
 @import "tailwindcss";
-@import "./tema/tokens.css";
 
 /* Tema escuro: liga com a classe .escuro no <html>. */
 @custom-variant dark (&:where(.escuro, .escuro *));
 
-/* Fonte Inter (licença SIL OFL, vem no pacote @fontsource-variable/inter): vai DENTRO do
-   programa, não depende de internet. Importada no main.tsx. */
+/* Fonte Inter. No Plus vem de public/fontes/Inter.ttf; aqui vem do pacote @fontsource-variable/inter
+   (mesma fonte, com a licença OFL junto), importado no main.tsx. Os dois jeitos dão o mesmo visual. */
+
+/*
+  Cores da UP Contábil (as mesmas do sistema atual), num desenho no estilo Apple:
+  superfícies claras, vidro translúcido, cantos generosos e sombras suaves.
+*/
+:root {
+  /* tintas das linhas da Escrituração (as mesmas do sistema atual) */
+  --tinta-amarelo: #fbefc0; --tinta-verde: #dcefe2; --tinta-vermelho: #f8dad1; --tinta-azul: #dee3f5;
+  --tinta-laranja: #fae1cc; --tinta-roxo: #e7ddf2; --tinta-cinza: #e5e0d9; --saida: #c44a35;
+  /* a linha «cinza» das tabelas (uma branca, uma cinza) */
+  --zebra: rgba(60, 50, 30, 0.065);
+  --fundo: #f4f0ea;
+  --superficie: #ffffff;
+  --vidro: rgb(255 255 255 / 0.72);
+  --texto: #2b2a28;
+  --texto-2: #5e564e;
+  --texto-3: #70675d;
+  --borda: rgb(43 42 40 / 0.1);
+  --campo: rgb(43 42 40 / 0.05);
+  --grafite: #2b2a28;
+  --bege: #ddd0c8;
+  /* ★ 18/10/2026: um tom mais escuro, para o texto branco nos botões verdes ficar legível */
+  --verde: #2f8257;
+  --verde-texto: #245f42;
+  --vermelho: #c0432f;
+  --primario: #2b2a28;
+  --primario-texto: #f4f0ea;
+
+  /* «tinta» = a cor do que está escrito sobre o menu lateral e o fundo da entrada */
+  --tinta: #2b2a28;
+  --destaque: #2f8257;
+  --menu: #ebe4da;
+  --menu-brilho-1: rgb(255 255 255 / 0.65);
+  --menu-brilho-2: rgb(62 154 107 / 0.12);
+  /* fundo da tela de entrada: areia clara com clarões suaves */
+  --cena-1: #fbf8f3;
+  --cena-2: #efe7dc;
+  --cena-3: #e3d8ca;
+  --clarao: 1;
+
+  /* Visão geral (19/10/2026): cada cor diz sempre a mesma coisa em todos os gráficos */
+  --st-prazo: #2f8257;    /* entregue no prazo */
+  --st-atraso: #c98a1b;   /* entregue com atraso */
+  --st-vencida: #c0432f;  /* passou do prazo e não foi entregue */
+  --st-aberta: #d6cdc1;   /* a vencer */
+  --tp-rotina: #4f6fa8;
+  --tp-tarefa: #8a5a83;
+  --tp-estudo: #2f7f7a;
+}
+
+.escuro {
+  --tinta-amarelo: #4a4120; --tinta-verde: #1f3a2a; --tinta-vermelho: #4a2620; --tinta-azul: #262d4a;
+  --tinta-laranja: #4a3220; --tinta-roxo: #3a2a4a; --tinta-cinza: #36322d; --saida: #f08a78;
+  --zebra: rgba(255, 255, 255, 0.045);
+  --fundo: #191816;
+  --superficie: #22211e;
+  --vidro: rgb(34 33 30 / 0.72);
+  --texto: #f2ede6;
+  --texto-2: #c9c0b5;
+  --texto-3: #9a9288;
+  --borda: rgb(255 255 255 / 0.09);
+  --campo: rgb(255 255 255 / 0.06);
+  --verde: #2e8257;
+  --verde-texto: #8ed3ae;
+  --vermelho: #e8735f;
+  --primario: #e6ded3;
+  --primario-texto: #1b1a18;
+
+  --tinta: #ffffff;
+  --destaque: #ddd0c8;
+  --menu: #262420;
+  --menu-brilho-1: rgb(221 208 200 / 0.1);
+  --menu-brilho-2: rgb(62 154 107 / 0.1);
+  --cena-1: #3a3632;
+  --cena-2: #22201d;
+  --cena-3: #171614;
+  --clarao: 1;
+
+  --st-prazo: #4fae7c;
+  --st-atraso: #e0a845;
+  --st-vencida: #e8735f;
+  --st-aberta: #4a443d;
+  --tp-rotina: #7b98d1;
+  --tp-tarefa: #b68aae;
+  --tp-estudo: #5fb0aa;
+}
+
+@theme inline {
+  --font-sans: "Inter Variable", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+  --color-fundo: var(--fundo);
+  --color-superficie: var(--superficie);
+  --color-vidro: var(--vidro);
+  --color-texto: var(--texto);
+  --color-texto-2: var(--texto-2);
+  --color-texto-3: var(--texto-3);
+  --color-borda: var(--borda);
+  --color-campo: var(--campo);
+  --color-grafite: var(--grafite);
+  --color-bege: var(--bege);
+  --color-verde: var(--verde);
+  --color-verde-texto: var(--verde-texto);
+  --color-vermelho: var(--vermelho);
+  --color-primario: var(--primario);
+  --color-primario-texto: var(--primario-texto);
+  --color-tinta: var(--tinta);
+  --color-destaque: var(--destaque);
+  --color-menu: var(--menu);
+}
 
 html, body, #root { height: 100%; }
 body {
@@ -15,37 +127,53 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   font-feature-settings: "cv11", "ss01";
-  user-select: none;   /* programa de desktop: só campos selecionam texto */
+  user-select: none;
   overflow: hidden;
 }
 input, textarea { user-select: text; }
-:focus-visible { outline: none; }  /* o foco é o anel do próprio componente (ring-acento) */
+:focus-visible { outline: none; }
 
-/* Barra de rolagem discreta: fina, sem trilho; só aparece enquanto rola (lib/rolagem.ts). */
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: transparent; }
-::-webkit-scrollbar-button { display: none; }
+/* Barra de rolagem discreta: fina, sem trilho e sem setas; só aparece enquanto se rola
+   (ou com o mouse em cima da própria barra, para poder arrastar). Ver `lib/rolagem.ts`. */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+::-webkit-scrollbar-button {
+  display: none;
+}
 ::-webkit-scrollbar-thumb {
   background-color: transparent;
   border: 3px solid transparent;
   border-radius: 999px;
   background-clip: padding-box;
 }
-[data-rolando]::-webkit-scrollbar-thumb { background-color: color-mix(in srgb, var(--texto-3) 45%, transparent); }
-::-webkit-scrollbar-thumb:hover { background-color: color-mix(in srgb, var(--texto-3) 75%, transparent); }
+[data-rolando]::-webkit-scrollbar-thumb {
+  background-color: color-mix(in srgb, var(--texto-3, #888) 45%, transparent);
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in srgb, var(--texto-3, #888) 75%, transparent);
+}
 
-/* «Reduzir desfoque» (preferência do usuário ou PC fraco): nada embaçado atrás das janelas */
-html.sem-desfoque *, html.sem-desfoque *::before, html.sem-desfoque *::after {
+/* «Reduzir desfoque» (menu do perfil): nada embaçado atrás das janelas */
+html.sem-desfoque *,
+html.sem-desfoque *::before,
+html.sem-desfoque *::after {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
 
-/* barra «indo e vindo» (carregando sem saber quanto falta) */
+/* barra «indo e vindo» da tela Atualizando */
 @keyframes deslizar {
   0% { transform: translateX(-110%); }
   100% { transform: translateX(310%); }
 }
 
-/* peças nativas (setinhas de número, calendário do navegador) acompanham o tema */
+/* ★ 30/10/2026 — no tema escuro, as peças nativas do navegador (setinhas do campo de número,
+   barra de rolagem, calendário) também ficam escuras. */
 :root { color-scheme: light; }
 :root.escuro { color-scheme: dark; }

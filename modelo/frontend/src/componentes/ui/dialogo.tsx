@@ -1,16 +1,10 @@
 import * as React from "react";
 import * as D from "@radix-ui/react-dialog";
-import { Drawer } from "vaul";
 import { AnimatePresence, motion } from "motion/react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { MOLA_JANELA } from "@/tema/movimento";
-import { Botao } from "./botao";
 
-/**
- * JANELA por cima da tela, no estilo das folhas do macOS: o fundo escurece e desfoca,
- * a janela entra crescendo de 94% com mola. Esc ou clique fora fecham.
- */
+/** Janela por cima da tela, no estilo das folhas do macOS: entra com mola e fundo desfocado. */
 export function Dialogo({
   aberto,
   aoFechar,
@@ -43,22 +37,26 @@ export function Dialogo({
             <D.Content asChild forceMount aria-describedby={undefined}>
               <motion.div
                 className={cn(
-                  "fixed left-1/2 top-1/2 z-50 w-[calc(100%-32px)] rounded-janela border border-borda",
-                  "max-h-[calc(100vh-32px)] overflow-y-auto bg-superficie p-7 shadow-janela",
+                  "fixed left-1/2 top-1/2 z-50 w-[calc(100%-32px)] rounded-[24px] border border-borda",
+                  "max-h-[calc(100vh-32px)] overflow-y-auto bg-superficie p-7 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.45)]",
                   largura,
                 )}
                 initial={{ opacity: 0, scale: 0.94, x: "-50%", y: "-46%" }}
                 animate={{ opacity: 1, scale: 1, x: "-50%", y: "-50%" }}
                 exit={{ opacity: 0, scale: 0.96, x: "-50%", y: "-48%" }}
-                transition={MOLA_JANELA}
+                transition={{ type: "spring", stiffness: 420, damping: 32 }}
               >
                 <D.Close className="absolute right-4 top-4 rounded-full p-1.5 text-texto-3 transition hover:bg-campo hover:text-texto">
                   <X className="size-4" />
                 </D.Close>
-                <D.Title className="pr-8 text-[19px] font-semibold tracking-tight text-texto">{titulo}</D.Title>
+                <D.Title className="pr-8 text-[19px] font-semibold tracking-tight text-texto">
+                  {titulo}
+                </D.Title>
                 {descricao && (
                   <D.Description asChild>
-                    <div className="mt-1.5 whitespace-pre-line text-[14px] leading-relaxed text-texto-2">{descricao}</div>
+                    <div className="mt-1.5 whitespace-pre-line text-[14px] leading-relaxed text-texto-2">
+                      {descricao}
+                    </div>
                   </D.Description>
                 )}
                 <div className="mt-5">{children}</div>
@@ -71,7 +69,7 @@ export function Dialogo({
   );
 }
 
-/** Pergunta sim/não. O botão "sim" fica vermelho quando a ação é perigosa (apagar). */
+/** Pergunta de sim/não (substitui as caixas «Sim / Não» do sistema antigo). */
 export function Confirmacao({
   aberto,
   titulo,
@@ -90,53 +88,25 @@ export function Confirmacao({
   aoResponder: (sim: boolean) => void;
 }) {
   return (
-    <Dialogo aberto={aberto} aoFechar={() => aoResponder(false)} titulo={titulo} descricao={texto} largura="max-w-[400px]">
+    <Dialogo aberto={aberto} aoFechar={() => aoResponder(false)} titulo={titulo} descricao={texto}>
       <div className="flex justify-end gap-2">
-        <Botao autoFocus variante="leve" onClick={() => aoResponder(false)}>{nao}</Botao>
-        <Botao variante={perigoso ? "perigo" : "acento"} onClick={() => aoResponder(true)}>{sim}</Botao>
+        <button
+          autoFocus
+          onClick={() => aoResponder(false)}
+          className="h-10 rounded-xl bg-campo px-4 text-sm font-medium text-texto transition hover:bg-borda"
+        >
+          {nao}
+        </button>
+        <button
+          onClick={() => aoResponder(true)}
+          className={cn(
+            "h-10 rounded-xl px-4 text-sm font-medium text-white transition hover:brightness-110",
+            perigoso ? "bg-vermelho" : "bg-verde",
+          )}
+        >
+          {sim}
+        </button>
       </div>
     </Dialogo>
-  );
-}
-
-/**
- * GAVETA lateral (ficha): desliza da direita, flutuando a 8 px das bordas, com cantos
- * arredondados. Arrastar para a direita também fecha (Vaul).
- */
-export function Gaveta({ aberto, aoFechar, titulo, cabecalho, rodape, children, cor }: {
-  aberto: boolean;
-  aoFechar: () => void;
-  titulo: string;
-  /** o que vai no topo, abaixo do título (ícone, subtítulo...) */
-  cabecalho?: React.ReactNode;
-  /** ações fixas embaixo */
-  rodape?: React.ReactNode;
-  children: React.ReactNode;
-  /** cor do véu no topo (identidade do item aberto): hex ou var(--g-1) */
-  cor?: string;
-}) {
-  return (
-    <Drawer.Root open={aberto} onOpenChange={(v) => !v && aoFechar()} direction="right">
-      <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 z-40 bg-black/20" />
-        <Drawer.Content
-          aria-describedby={undefined}
-          className="fixed bottom-2 right-2 top-2 z-50 flex w-[460px] max-w-[calc(100vw-16px)] flex-col overflow-hidden rounded-janela border border-borda bg-superficie shadow-janela outline-none"
-        >
-          <div
-            className="relative border-b border-borda px-6 pb-5 pt-6"
-            style={cor ? { background: `linear-gradient(180deg, color-mix(in srgb, ${cor} 13%, transparent) 0%, transparent 100%)` } : undefined}
-          >
-            {cabecalho}
-            <Drawer.Title className={cn("text-[18px] font-semibold leading-snug tracking-tight", cabecalho && "sr-only")}>{titulo}</Drawer.Title>
-            <button onClick={aoFechar} aria-label="Fechar" className="absolute right-4 top-4 rounded-full p-1.5 text-texto-3 transition hover:bg-campo hover:text-texto">
-              <X className="size-4" />
-            </button>
-          </div>
-          <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5">{children}</div>
-          {rodape && <div className="flex gap-2 border-t border-borda px-6 py-4">{rodape}</div>}
-        </Drawer.Content>
-      </Drawer.Portal>
-    </Drawer.Root>
   );
 }

@@ -30,7 +30,7 @@ export function Lista<T extends string | number>({
   /** o que dizer quando não há nada na lista */
   semItens?: string;
   buscavel?: boolean;
-  /** menor (h-9, letra 13px), para formulários densos */
+  /** menor (h-9, letra 13px), para formulários densos como o editor de regras */
   compacto?: boolean;
   /** classes do bloco todo (ex.: a largura) */
   classe?: string;
@@ -62,8 +62,8 @@ export function Lista<T extends string | number>({
             className={cn(
               "flex items-center justify-between gap-2 rounded-xl border border-transparent bg-campo px-3 text-left outline-none transition",
               compacto ? "h-9 text-[13px]" : "h-10 text-[14px]",
-              "focus-visible:border-acento/50 focus-visible:ring-4 focus-visible:ring-acento/15",
-              aberto && "border-acento/50 ring-4 ring-acento/15",
+              "focus-visible:border-verde/50 focus-visible:ring-4 focus-visible:ring-verde/15",
+              aberto && "border-verde/50 ring-4 ring-verde/15",
             )}
           >
             <span className={cn("truncate", marcados.length ? "text-texto" : "text-texto-3")}>{texto}</span>
@@ -74,7 +74,7 @@ export function Lista<T extends string | number>({
           <Popover.Content
             align="start"
             sideOffset={6}
-            className="z-[60] max-h-[280px] min-w-[var(--radix-popover-trigger-width)] max-w-[420px] overflow-y-auto rounded-2xl border border-borda bg-superficie p-1.5 shadow-pop"
+            className="z-[60] max-h-[280px] min-w-[var(--radix-popover-trigger-width)] max-w-[420px] overflow-y-auto rounded-2xl border border-borda bg-superficie p-1.5 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.35)]"
           >
             {buscavel && (
               <input
@@ -102,9 +102,9 @@ export function Lista<T extends string | number>({
                   <span
                     className={cn(
                       "flex size-4 shrink-0 items-center justify-center",
-                      multipla && "rounded-[calc(var(--raio-p)-3px)] border",
-                      multipla && (sim ? "border-acento bg-acento text-sobre-acento" : "border-borda"),
-                      !multipla && "text-acento",
+                      multipla && "rounded-[5px] border",
+                      multipla && (sim ? "border-verde bg-verde text-white" : "border-borda"),
+                      !multipla && "text-verde",
                     )}
                   >
                     {sim && <Check className="size-3" strokeWidth={3} />}

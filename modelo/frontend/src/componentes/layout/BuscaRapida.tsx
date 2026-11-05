@@ -3,9 +3,10 @@ import { Command } from "cmdk";
 import { AnimatePresence, motion } from "motion/react";
 import { LayoutGrid, LogOut, Moon, Plus, Search, type LucideIcon } from "lucide-react";
 import { ITENS } from "@/dados/exemplo";
-import { semAcento } from "@/lib/utils";
-import { MOLA_RAPIDA } from "@/tema/movimento";
-import { SECOES, type IrPara } from "./telas";
+import { semAcento } from "@/lib/extras";
+import { pedirTela } from "@/lib/pedidoTela";
+import { MOLA_BUSCA } from "@/tema/movimento";
+import { secoesDoUsuario } from "./modulos";
 
 const GRUPO =
   "[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:pb-1 [&_[cmdk-group-heading]]:pt-2 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-texto-3";
@@ -21,10 +22,10 @@ function filtrar(valor: string, busca: string) {
 type Acao = { chave: string; nome: string; busca: string; icone: LucideIcon; onde?: string; fazer: () => void };
 
 /**
- * BUSCA RÁPIDA estilo Spotlight (Ctrl+K, ou o botão «Buscar» do menu):
+ * BUSCA RÁPIDA — a mesma do Plus (componentes/layout/BuscaRapida.tsx), estilo Spotlight (Ctrl+K):
  * ações do dia a dia, itens (depois de 2 letras) e todas as telas. Painel de VIDRO.
  */
-export function BuscaRapida({ aoIr, aoTrocarTema, aoSair }: { aoIr: IrPara; aoTrocarTema: () => void; aoSair?: () => void }) {
+export function BuscaRapida({ usuario, aoIr, aoTrocarTema, aoSair }: { usuario?: { perfil: string }; aoIr: (chave: string) => void; aoTrocarTema: () => void; aoSair?: () => void }) {
   const [aberta, setAberta] = useState(false);
   const [texto, setTexto] = useState("");
 
@@ -73,9 +74,9 @@ export function BuscaRapida({ aoIr, aoTrocarTema, aoSair }: { aoIr: IrPara; aoTr
             initial={{ opacity: 0, scale: 0.96, y: -8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: -4 }}
-            transition={MOLA_RAPIDA}
+            transition={MOLA_BUSCA}
             onMouseDown={(e) => e.stopPropagation()}
-            className="w-full max-w-[600px] overflow-hidden rounded-cartao border border-borda bg-vidro shadow-janela backdrop-blur-vidro"
+            className="w-full max-w-[600px] overflow-hidden rounded-[20px] border border-borda bg-vidro shadow-[0_30px_80px_-20px_rgba(0,0,0,0.45)] backdrop-blur-2xl"
           >
             <Command label="Busca rápida" loop filter={filtrar}>
               <div className="flex items-center gap-3 border-b border-borda px-5">
@@ -106,7 +107,7 @@ export function BuscaRapida({ aoIr, aoTrocarTema, aoSair }: { aoIr: IrPara; aoTr
                 {itens.length > 0 && (
                   <Command.Group heading="Abrir item" className={GRUPO}>
                     {itens.map((i) => (
-                      <Item key={i.id} valor={`${i.nome} ${i.codigo} #${i.id}`} aoEscolher={() => executar(() => aoIr("lista", { abrir: i.id }))}>
+                      <Item key={i.id} valor={`${i.nome} ${i.codigo} #${i.id}`} aoEscolher={() => executar(() => { aoIr("cadastro"); pedirTela({ tela: "cadastro", acao: "abrir", id: i.id }); })}>
                         <LayoutGrid className="size-[18px] text-texto-2" strokeWidth={1.75} />
                         <span className="truncate text-texto">{i.nome}</span>
                         <span className="ml-auto shrink-0 pl-4 text-[12px] tabular-nums text-texto-3">{i.codigo}</span>
@@ -115,9 +116,9 @@ export function BuscaRapida({ aoIr, aoTrocarTema, aoSair }: { aoIr: IrPara; aoTr
                   </Command.Group>
                 )}
 
-                {SECOES.map((s) => (
+                {secoesDoUsuario(usuario).map((s) => (
                   <Command.Group key={s.titulo} heading={`Ir para · ${s.titulo}`} className={GRUPO}>
-                    {s.telas.map((t) => (
+                    {s.modulos.map((t) => (
                       <Item key={t.chave} valor={`${t.nome} ${t.busca ?? ""}`} aoEscolher={() => executar(() => aoIr(t.chave))}>
                         <t.icone className="size-[18px] text-texto-2" strokeWidth={1.75} />
                         <span className="text-texto">{t.nome}</span>
@@ -140,7 +141,7 @@ function Item({ valor, aoEscolher, children }: { valor: string; aoEscolher: () =
     <Command.Item
       value={valor}
       onSelect={aoEscolher}
-      className="flex h-11 items-center gap-3 rounded-xl px-3 text-[14px] data-[selected=true]:bg-acento/12 data-[selected=true]:[&_svg]:text-acento"
+      className="flex h-11 items-center gap-3 rounded-xl px-3 text-[14px] data-[selected=true]:bg-verde/12 data-[selected=true]:[&_svg]:text-verde"
     >
       {children}
     </Command.Item>

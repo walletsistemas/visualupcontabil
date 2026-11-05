@@ -3,7 +3,7 @@ import * as Popover from "@radix-ui/react-popover";
 import { CalendarDays, ChevronLeft, ChevronRight, Clock, X } from "lucide-react";
 import { avisar } from "@/lib/avisos";
 import { cn } from "@/lib/utils";
-import { hojeIso, MESES } from "@/lib/datas";
+import { hojeIso, MESES } from "@/lib/competencia";
 
 const SEMANA = ["S", "T", "Q", "Q", "S", "S", "D"]; // começa na segunda, como no Brasil
 const SEMANA_CURTA = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
@@ -38,12 +38,12 @@ function Gatilho({
           type="button"
           className={cn(
             "group flex h-10 items-center gap-2 rounded-xl border border-transparent bg-campo px-3 text-left text-[14px] outline-none transition",
-            "focus-visible:border-acento/50 focus-visible:ring-4 focus-visible:ring-acento/15",
-            aberto && "border-acento/50 bg-superficie ring-4 ring-acento/15",
+            "focus-visible:border-verde/50 focus-visible:ring-4 focus-visible:ring-verde/15",
+            aberto && "border-verde/50 bg-superficie ring-4 ring-verde/15",
             desligado && "opacity-60",
           )}
         >
-          <Icone className={cn("size-4 shrink-0", texto ? "text-acento-texto" : "text-texto-3")} />
+          <Icone className={cn("size-4 shrink-0", texto ? "text-verde-texto" : "text-texto-3")} />
           <span className={cn("flex-1 truncate", texto ? "text-texto" : "text-texto-3")}>{texto || vazio}</span>
           {texto && aoLimpar && !desligado && (
             <span
@@ -65,7 +65,7 @@ function Gatilho({
 }
 
 const CAIXA =
-  "z-[60] rounded-2xl border border-borda bg-superficie p-3 shadow-pop outline-none";
+  "z-[60] rounded-2xl border border-borda bg-superficie p-3 shadow-[0_24px_60px_-18px_rgba(0,0,0,0.4)] outline-none data-[state=open]:animate-in";
 
 /** Escolher um dia: calendário do sistema, em português, no lugar do do Windows. */
 export function SeletorData({
@@ -79,7 +79,7 @@ export function SeletorData({
   vazio?: string;
   /** travado: o balão que explica por quê, ao clicar */
   motivo?: string;
-  /** botão próprio no lugar do campo com rótulo (ex.: um ícone de calendário numa linha) */
+  /** botão próprio no lugar do campo com rótulo (ex.: a etapa da rotina) */
   gatilho?: React.ReactNode;
 }) {
   const [aberto, setAberto] = useState(false);
@@ -159,14 +159,14 @@ export function SeletorData({
                   onClick={() => escolher(c.chave)}
                   className={cn(
                     "relative flex h-9 items-center justify-center rounded-xl text-[13px] tabular-nums transition",
-                    sel ? "bg-acento font-semibold text-sobre-acento shadow-[0_4px_12px_-4px_var(--acento)]" : "hover:bg-campo",
+                    sel ? "bg-verde font-semibold text-white shadow-[0_4px_12px_-4px_rgba(62,154,107,0.7)]" : "hover:bg-campo",
                     !sel && c.fora && "text-texto-3/50",
                     !sel && !c.fora && "text-texto",
-                    !sel && eHoje && "font-semibold text-acento-texto",
+                    !sel && eHoje && "font-semibold text-verde-texto",
                   )}
                 >
                   {c.d}
-                  {eHoje && !sel && <span className="absolute bottom-1 size-1 rounded-full bg-acento" />}
+                  {eHoje && !sel && <span className="absolute bottom-1 size-1 rounded-full bg-verde" />}
                 </button>
               );
             })}
@@ -177,7 +177,7 @@ export function SeletorData({
                 type="button"
                 key={r}
                 onClick={() => escolher(somar(n))}
-                className="h-8 flex-1 rounded-lg bg-campo text-[12px] font-medium text-texto-2 transition hover:bg-acento/12 hover:text-acento-texto"
+                className="h-8 flex-1 rounded-lg bg-campo text-[12px] font-medium text-texto-2 transition hover:bg-verde/12 hover:text-verde-texto"
               >
                 {r}
               </button>
@@ -186,7 +186,7 @@ export function SeletorData({
               <button
                 type="button"
                 onClick={() => escolher("")}
-                className="h-8 rounded-lg px-2.5 text-[12px] font-medium text-texto-3 transition hover:bg-campo hover:text-perigo"
+                className="h-8 rounded-lg px-2.5 text-[12px] font-medium text-texto-3 transition hover:bg-campo hover:text-vermelho"
               >
                 Limpar
               </button>
@@ -255,7 +255,7 @@ export function SeletorHora({
                 onClick={() => definir(hh, Number.isNaN(m) ? 0 : m)}
                 className={cn(
                   "h-9 rounded-xl text-[13px] font-medium tabular-nums transition",
-                  hh === h ? "bg-acento text-sobre-acento" : "bg-campo/60 text-texto-2 hover:bg-campo hover:text-texto",
+                  hh === h ? "bg-verde text-white" : "bg-campo/60 text-texto-2 hover:bg-campo hover:text-texto",
                 )}
               >
                 {doisDigitos(hh)}h
@@ -275,7 +275,7 @@ export function SeletorHora({
                 }}
                 className={cn(
                   "h-9 rounded-xl text-[13px] font-medium tabular-nums transition disabled:opacity-40",
-                  mm === m ? "bg-acento text-sobre-acento" : "bg-campo/60 text-texto-2 hover:bg-campo hover:text-texto",
+                  mm === m ? "bg-verde text-white" : "bg-campo/60 text-texto-2 hover:bg-campo hover:text-texto",
                 )}
               >
                 :{doisDigitos(mm)}
@@ -297,7 +297,7 @@ export function SeletorHora({
                 else avisar(`«${v}» não é um horário válido. Use, por exemplo, 9, 9:30 ou 1745.`);
               }}
               onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), (e.target as HTMLInputElement).blur(), setAberto(false))}
-              className="h-8 w-[72px] rounded-lg bg-campo px-2 text-center text-[13px] tabular-nums outline-none focus:ring-2 focus:ring-acento/30"
+              className="h-8 w-[72px] rounded-lg bg-campo px-2 text-center text-[13px] tabular-nums outline-none focus:ring-2 focus:ring-verde/30"
             />
             {valor && (
               <button
@@ -306,7 +306,7 @@ export function SeletorHora({
                   aoMudar("");
                   setAberto(false);
                 }}
-                className="ml-auto h-8 rounded-lg px-2.5 text-[12px] font-medium text-texto-3 hover:bg-campo hover:text-perigo"
+                className="ml-auto h-8 rounded-lg px-2.5 text-[12px] font-medium text-texto-3 hover:bg-campo hover:text-vermelho"
               >
                 Limpar
               </button>

@@ -1,15 +1,12 @@
 import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Dialogo } from "@/componentes/ui/dialogo";
-import { Botao } from "@/componentes/ui/botao";
+import { cn } from "@/lib/utils";
 
 type Pedido = { titulo: string; texto?: string; botao?: string; perigo?: boolean };
 
-/**
- * «Tem certeza?» numa janela do app, chamado de qualquer lugar:
- *   if (await confirmar({ titulo: "Apagar?", botao: "Apagar" })) ...
- * Enter confirma, Esc cancela. Substitui o window.confirm (feio) e o QMessageBox.
- */
+/** Pergunta «tem certeza?» numa janela do app e devolve true só se a pessoa confirmar.
+ * Enter confirma, Esc cancela. */
 export function confirmar(p: Pedido): Promise<boolean> {
   return new Promise((resolver) => {
     const caixa = document.createElement("div");
@@ -45,9 +42,17 @@ function Janela({ titulo, texto, botao = "Confirmar", perigo = true, aoFim }: Pe
   }, []);
   return (
     <Dialogo aberto={aberto} aoFechar={() => fechar(false)} titulo={titulo} descricao={texto} largura="max-w-[400px]">
-      <div className="flex justify-end gap-2">
-        <Botao variante="fantasma" tamanho="p" className="h-9" onClick={() => fechar(false)}>Cancelar</Botao>
-        <Botao autoFocus variante={perigo ? "perigo" : "acento"} tamanho="p" className="h-9" onClick={() => fechar(true)}>{botao}</Botao>
+      <div className="mt-5 flex justify-end gap-2">
+        <button onClick={() => fechar(false)} className="h-9 rounded-xl px-4 text-[13.5px] font-medium text-texto-2 hover:bg-campo">
+          Cancelar
+        </button>
+        <button
+          autoFocus
+          onClick={() => fechar(true)}
+          className={cn("h-9 rounded-xl px-4 text-[13.5px] font-medium text-white hover:brightness-105", perigo ? "bg-vermelho" : "bg-verde")}
+        >
+          {botao}
+        </button>
       </div>
     </Dialogo>
   );

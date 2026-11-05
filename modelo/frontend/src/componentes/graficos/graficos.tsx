@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * GRÁFICOS feitos só com CSS (sem biblioteca): seguem o tema claro/escuro sozinhos e são leves.
- * Regra de cor: cada cor (tokens --g-1..--g-7) diz SEMPRE a mesma coisa em todas as telas.
+ * Regra de cor: cada cor (tokens --st-prazo..--tp-estudo) diz SEMPRE a mesma coisa em todas as telas.
  */
 
 export const pct = (a: number, b: number) => (b ? Math.round((a * 100) / b) : 0);
@@ -23,7 +23,7 @@ export function Painel({ titulo, mede, legenda, leitura, acao, children, classNa
   className?: string;
 }) {
   return (
-    <section className={cn("flex min-w-0 flex-col rounded-cartao border border-borda bg-superficie shadow-cartao", className)}>
+    <section className={cn("flex min-w-0 flex-col rounded-[20px] border border-borda bg-superficie shadow-[0_1px_2px_rgba(0,0,0,0.04)]", className)}>
       <header className="flex items-start gap-3 px-5 pt-4">
         <div className="min-w-0 flex-1">
           <h3 className="text-[14.5px] font-semibold tracking-tight">{titulo}</h3>
@@ -67,7 +67,7 @@ export function Indicador({ cor, rotulo, valor, referencia, explica, alerta, aoC
         {aoClicar && <ChevronRight className="ml-auto size-3.5 text-texto-3 opacity-0 transition group-hover:opacity-100" />}
       </span>
       <span className="flex items-baseline gap-1.5">
-        <span className={cn("text-[28px] font-semibold leading-none tracking-tight tabular-nums", alerta && "text-perigo")}>{valor}</span>
+        <span className={cn("text-[28px] font-semibold leading-none tracking-tight tabular-nums", alerta && "text-vermelho")}>{valor}</span>
         {referencia && <span className="text-[12.5px] tabular-nums text-texto-3">{referencia}</span>}
       </span>
       <span className="text-[11.5px] leading-snug text-texto-3">{explica}</span>
@@ -78,7 +78,7 @@ export function Indicador({ cor, rotulo, valor, referencia, explica, alerta, aoC
 /** Faixa de indicadores num cartão só, com divisórias de 1 px (nada de caixinhas soltas). Quantos couberem por linha. */
 export function FaixaIndicadores({ children }: { children: ReactNode }) {
   return (
-    <section className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-px overflow-hidden rounded-cartao border border-borda bg-borda shadow-cartao [&>*]:bg-superficie">
+    <section className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-px overflow-hidden rounded-[20px] border border-borda bg-borda shadow-[0_1px_2px_rgba(0,0,0,0.04)] [&>*]:bg-superficie">
       {children}
     </section>
   );

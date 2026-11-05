@@ -1,55 +1,56 @@
 #!/usr/bin/env python3
-"""PONTO DE ENTRADA do programa (o .exe começa aqui).
+"""PONTO DE ENTRADA — o mesmo desenho do Sistema Contábil Plus (backend/app.py).
 
 O que acontece ao abrir:
-1. Trava de «uma cópia por computador».
-2. Liga o FastAPI SÓ dentro deste computador (127.0.0.1, porta sorteada) e com uma senha
-   interna sorteada: nenhum outro programa nem site consegue usar a API.
-3. Abre a janela do Windows (pywebview + WebView2) com as telas React (frontend/dist).
+1. Trava de «uma cópia por computador» (janela/instancia.py).
+2. Liga o FastAPI SÓ dentro deste computador (127.0.0.1, porta lembrada ou sorteada) e com uma
+   senha interna sorteada: nenhum outro programa nem site consegue usar a API.
+3. Abre a janela do Windows (pywebview + WebView2) com as telas (frontend/dist).
 
-Jeitos de abrir:
-  python app.py                 -> janela própria (igual ao instalado)
-  python app.py --navegador     -> as telas no navegador padrão (a janela preta fica aberta)
-  python app.py --sem-janela    -> servidor de TESTE: porta 8765, senha «dev» (Vite e testes)
-  python app.py --dev           -> janela abrindo as telas do Vite (recarregam na hora)
+Jeitos de abrir (os atalhos ficam em `scripts/`):
+- sem nada: janela própria, igual ao instalado;
+- `--navegador`: as telas no navegador padrão (a janela preta fica aberta);
+- `--sem-janela`: servidor de TESTE fixo (porta 8765, senha «dev»), sem abrir nada;
+- `--dev`: a janela abre as telas do Vite (http://localhost:5173), que recarregam na hora.
 
-NA CIRURGIA: o motor antigo (regras, banco, leitura de arquivos) FICA ONDE ESTÁ, na raiz do
-projeto (o programa antigo continua funcionando com ele). Esta casca só o importa: a raiz entra
-no sys.path abaixo. O que estava preso nas telas Qt vira funções em `servicos/`; `api/` só repassa.
+O motor (regras, banco, leitura de arquivos) mora em `motor/` — a cópia do sistema antigo,
+mudando o mínimo, como no Plus. Esta pasta entra no sys.path: `import banco` continua valendo.
 """
 import hmac
 import os
+import re
 import secrets
 import socket
 import sys
 import threading
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
-RAIZ = os.path.dirname(AQUI)  # a raiz do projeto: onde o motor antigo já mora
-sys.path[:0] = [AQUI, RAIZ]
+sys.path[:0] = [AQUI, os.path.join(AQUI, "motor")]
 
-NOME = "Meu Sistema"   # aparece na janela (pode ter acento)
-PASTA = "MeuSistema"   # nome da pasta gravável: sem acento nem espaço
+NOME = "Meu Sistema"            # aparece na janela (pode ter acento)
+PASTA = "MeuSistema"            # nome da pasta gravável: sem acento nem espaço
+VAR_DADOS = "MEU_SISTEMA_DADOS"  # no Plus: SISTEMA_CONTABIL_DADOS
 DEV = "--dev" in sys.argv or "--sem-janela" in sys.argv
 NAVEGADOR = "--navegador" in sys.argv
 URL_VITE = "http://localhost:5173"
-MAX_CORPO = 60 * 1024 * 1024  # maior envio aceito (anexos, planilhas)
+MAX_CORPO = 60 * 1024 * 1024    # o maior pedido aceito (anexos, extratos, planilhas)
+
+#: só os arquivos que a tela abre por endereço (<img src>, anexo em nova aba) aceitam ?t=
+_SENHA_NO_ENDERECO = re.compile(r"^/api/arquivos/[^/]+$")
 
 
 def pasta_telas() -> str:
-    """As telas compiladas. No .exe vão junto, em `_internal/telas`."""
+    """As telas compiladas (`frontend/dist`). No .exe vão junto, em `_internal/telas`."""
     if getattr(sys, "_MEIPASS", None):
         return os.path.join(sys._MEIPASS, "telas")
     return os.path.join(os.path.dirname(AQUI), "frontend", "dist")
 
 
 def pasta_gravavel() -> str:
-    """Onde a CASCA guarda o que é deste computador (config, trava, porta, dados do WebView).
-    `MEU_SISTEMA_DADOS` troca a pasta. ⚠ Isto NÃO isola os dados do motor: veja como o motor
-    acha os dados dele (variável própria, caminho a partir de __file__, config) e aponte para
-    uma CÓPIA nos testes (guia/05, "Passo 2")."""
-    pasta = (os.environ.get("MEU_SISTEMA_DADOS") or "").strip() or os.path.join(
-        os.environ.get("PROGRAMDATA", os.path.expanduser("~")), PASTA)
+    """Config, trava, porta e dados da janela deste computador: `%PROGRAMDATA%\\<PASTA>`, ou a
+    variável VAR_DADOS (base de teste). O motor usa a MESMA variável para achar os dados dele,
+    como no Plus — assim a base de teste fica isolada por inteiro."""
+    pasta = (os.environ.get(VAR_DADOS) or "").strip() or os.path.join(os.environ.get("PROGRAMDATA", r"C:\ProgramData"), PASTA)
     os.makedirs(pasta, exist_ok=True)
     return pasta
 
@@ -67,25 +68,32 @@ def criar_api(token: str):
                   openapi_url="/api/openapi.json" if DEV else None)
 
     @app.middleware("http")
-    async def exigir_senha(request: Request, chamar):
-        # só /api pede a senha interna (cabeçalho X-Token); as telas (arquivos) não
+    async def exigir_token(request: Request, chamar):
+        # Só as portas /api pedem a senha interna; as telas (arquivos) não.
         livre = request.url.path in ("/api/docs", "/api/openapi.json")
-        if (request.url.path.startswith("/api") and not livre and request.method != "OPTIONS"
-                and not hmac.compare_digest(request.headers.get("x-token") or "", token)):
+        if (request.url.path.startswith("/api") and not livre
+                and request.method != "OPTIONS"
+                and not hmac.compare_digest(request.headers.get("x-token") or "", token)
+                # imagens (<img src>) não mandam cabeçalho: a senha vai no endereço, só em GET
+                and not (request.method == "GET" and _SENHA_NO_ENDERECO.match(request.url.path)
+                         and hmac.compare_digest(request.query_params.get("t") or "", token))):
             return JSONResponse({"detail": "sem permissão"}, status_code=401)
         try:
             grande = int(request.headers.get("content-length") or 0) > MAX_CORPO
         except ValueError:
             grande = True
         if grande:
-            return JSONResponse({"detail": "Arquivo grande demais: o limite é de 60 MB."}, status_code=413)
+            return JSONResponse({"detail": "Arquivo grande demais: o limite é de 60 MB por envio."}, status_code=413)
         resposta = await chamar(request)
         if request.url.path.startswith("/api"):
-            resposta.headers["Cache-Control"] = "no-store"  # dado velho nunca aparece no lugar do novo
+            # dado nunca fica guardado no navegador: uma resposta velha não aparece no lugar da nova
+            resposta.headers["Cache-Control"] = "no-store"
         return resposta
 
-    # só atende quem chama por 127.0.0.1/localhost (barra sites que trocam o nome do endereço)
-    app.add_middleware(TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost", "testserver"])
+    # só atende quem chama por 127.0.0.1/localhost (barra páginas que trocam o nome do endereço);
+    # «testserver» é o nome que o cliente de teste (pytest) usa: só vale nos testes
+    em_teste = "pytest" in sys.modules
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost"] + (["testserver"] if em_teste else []))
     if DEV:
         app.add_middleware(CORSMiddleware, allow_origins=[URL_VITE], allow_methods=["*"], allow_headers=["*"])
 
@@ -100,7 +108,7 @@ def criar_api(token: str):
     @app.get("/{caminho:path}", include_in_schema=False)
     def telas(caminho: str):
         if caminho.startswith("api/"):
-            return JSONResponse({"detail": "Esta função não existe nesta versão."}, status_code=404)
+            return JSONResponse({"detail": "Esta função não existe nesta versão do sistema."}, status_code=404)
         # só arquivos de DENTRO da pasta das telas (nunca «../» nem «C:/...»)
         raiz = os.path.realpath(dist)
         alvo = os.path.realpath(os.path.join(raiz, caminho))
@@ -108,35 +116,19 @@ def criar_api(token: str):
             return FileResponse(alvo)
         indice = os.path.join(raiz, "index.html")
         if not os.path.isfile(indice):
-            return JSONResponse({"detail": "As telas não foram montadas (rode npm run build em frontend/)."}, status_code=503)
+            return JSONResponse({"detail": "As telas não foram montadas (frontend/dist)."}, status_code=503)
         return FileResponse(indice)
 
     return app
 
 
-def travar_uma_copia():
-    """Arquivo travado pelo Windows enquanto o programa vive. None = já há outra cópia aberta."""
-    f = open(os.path.join(pasta_gravavel(), "programa_aberto.lock"), "a+")
-    try:
-        if os.name == "nt":
-            import msvcrt
-            f.seek(0)
-            msvcrt.locking(f.fileno(), msvcrt.LK_NBLCK, 1)
-        else:
-            import fcntl
-            fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except OSError:
-        f.close()
-        return None
-    return f
-
-
 def porta_livre() -> int:
-    """Reusa a porta da última abertura (o que as telas guardam fica preso ao endereço);
-    ocupada, sorteia outra."""
+    """Reusa a porta da última abertura: o que as telas guardam (filtros, colunas...) fica
+    preso ao endereço, e porta nova = endereço novo = tudo esquecido. Ocupada: sorteia outra."""
     arq = os.path.join(pasta_gravavel(), "porta.txt")
     try:
-        lembrada = int(open(arq, encoding="utf-8").read().strip())
+        with open(arq, encoding="utf-8") as f:
+            lembrada = int(f.read().strip())
     except (OSError, ValueError):
         lembrada = 0
     for p in ((lembrada, 0) if lembrada else (0,)):
@@ -148,24 +140,40 @@ def porta_livre() -> int:
             porta = s.getsockname()[1]
         if porta != lembrada:
             try:
-                open(arq, "w", encoding="utf-8").write(str(porta))
+                with open(arq, "w", encoding="utf-8") as f:
+                    f.write(str(porta))
             except OSError:
                 pass
         return porta
     raise OSError("sem porta livre")
 
 
+def base_oficial_sem_pedido() -> bool:
+    """Regra do Plus: rodando pelo código (não instalado), a base OFICIAL só abre com `--oficial`.
+    Sem a variável de teste definida, para — ninguém testa nos dados reais por engano."""
+    if getattr(sys, "frozen", False) or "--oficial" in sys.argv:
+        return False
+    return not (os.environ.get(VAR_DADOS) or "").strip()
+
+
 def main():
+    if base_oficial_sem_pedido():
+        sys.exit(f"Pelo código, o sistema só abre numa base de teste: defina {VAR_DADOS} "
+                 "(ou use scripts\\ABRIR_*.bat ficticia). Para a base oficial, use --oficial.")
+
     import uvicorn
 
     if "--sem-janela" in sys.argv:
-        print("Telas de teste: http://127.0.0.1:8765/#api=http://127.0.0.1:8765&t=dev")
+        print("Telas em http://127.0.0.1:8765/#api=http://127.0.0.1:8765&t=dev")
         uvicorn.run(criar_api("dev"), host="127.0.0.1", port=8765, log_level="warning")
         return
 
     import webview
 
-    trava = travar_uma_copia()
+    from janela import instancia
+    from janela.ponte import Ponte
+
+    trava = instancia.travar(pasta_gravavel())
     if trava is None:
         webview.create_window(NOME, html=(
             "<body style='font-family:Segoe UI;padding:32px'>"
@@ -180,16 +188,17 @@ def main():
     servidor = uvicorn.Server(uvicorn.Config(criar_api(token), host="127.0.0.1", port=porta, log_level="warning"))
     threading.Thread(target=servidor.run, name="api", daemon=True).start()
 
-    # a porta e a senha vão depois do # (essa parte do endereço não sai do computador)
+    # A porta e a senha vão no endereço (depois do #, que não sai do computador).
     base = URL_VITE if DEV else f"http://127.0.0.1:{porta}"
     url = f"{base}/#api=http://127.0.0.1:{porta}&t={token}"
 
     if NAVEGADOR:
         import time
         import webbrowser
-        time.sleep(0.5)
+        time.sleep(0.5)  # dá tempo de o servidor ligar
         webbrowser.open(url + "&m=navegador")
-        print(f"O {NOME} abriu no navegador. Para fechar, feche esta janela preta.")
+        print(f"O {NOME} abriu no navegador. Para fechar o sistema, feche esta janela preta.")
+        print("Se a aba fechar, abra de novo por este endereço:\n  " + url + "&m=navegador")
         try:
             while not servidor.should_exit:
                 time.sleep(1)
@@ -199,18 +208,20 @@ def main():
         trava.close()
         return
 
-    from janela.ponte import Ponte
     ponte = Ponte()
-    # background_color = a cor de fundo do tema: a janela não pisca branco ao abrir
+    # background_color = o fundo do tema escuro do Plus (#2B2A28): a janela não pisca branco
     janela = webview.create_window(NOME, url, js_api=ponte, width=1280, height=820, min_size=(640, 480),
-                                   maximized=True, background_color="#F4F0EA")
+                                   maximized=True, background_color="#2B2A28")
     ponte.ligar(janela)
-    webview.start(debug=DEV, private_mode=False, storage_path=os.path.join(pasta_gravavel(), "janela"))
+    from janela.acoes import pasta_do_usuario
+    webview.start(debug=DEV, private_mode=False, storage_path=os.path.join(pasta_do_usuario(), "janela"))
     servidor.should_exit = True
     trava.close()
 
 
 if __name__ == "__main__":
+    # ⚠ PRIMEIRO de tudo: no .exe, processos filhos abrem este mesmo programa; sem isto,
+    # cada um tentaria abrir a janela do sistema.
     import multiprocessing
-    multiprocessing.freeze_support()  # no .exe, processos filhos não abrem outra janela
+    multiprocessing.freeze_support()
     main()

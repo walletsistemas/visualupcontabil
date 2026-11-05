@@ -1,16 +1,16 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { Copy, type LucideIcon } from "lucide-react";
-import { toast } from "sonner";
 import { copiarTexto } from "@/lib/avisos";
-import { cn, corPorTexto, iniciais } from "@/lib/utils";
+import { cn, iniciais } from "@/lib/utils";
+import { corPorTexto } from "@/lib/extras";
 import { Botao } from "./botao";
 
 /** SELO (pílula de status): fundo da cor a 12% + texto na cor. */
 export function Selo({ children, tom = "neutro", className }: {
   children: ReactNode;
-  tom?: "neutro" | "acento" | "alerta" | "perigo";
+  tom?: "neutro" | "ambar" | "vermelho" | "verde";
   className?: string;
 }) {
   return (
@@ -18,9 +18,9 @@ export function Selo({ children, tom = "neutro", className }: {
       className={cn(
         "inline-flex h-[22px] items-center gap-1.5 rounded-full px-2.5 text-[11.5px] font-medium whitespace-nowrap",
         tom === "neutro" && "bg-campo text-texto-2",
-        tom === "acento" && "bg-acento/12 text-acento-texto",
-        tom === "alerta" && "bg-alerta/12 text-alerta",
-        tom === "perigo" && "bg-perigo/12 text-perigo",
+        tom === "verde" && "bg-verde/12 text-verde-texto",
+        tom === "ambar" && "bg-amber-500/12 text-amber-700 dark:text-amber-300",
+        tom === "vermelho" && "bg-vermelho/12 text-vermelho",
         className,
       )}
     >
@@ -98,11 +98,16 @@ export function BotaoCopiar({ texto }: { texto: string }) {
         e.stopPropagation();
         copiarTexto(texto);
       }}
-      className="flex size-5 shrink-0 items-center justify-center rounded-md text-texto-3 opacity-0 transition hover:bg-superficie hover:text-acento-texto group-hover/item:opacity-100"
+      className="flex size-5 shrink-0 items-center justify-center rounded-md text-texto-3 opacity-0 transition hover:bg-superficie hover:text-verde-texto group-hover/item:opacity-100"
     >
       <Copy className="size-3" />
     </button>
   );
+}
+
+/** Erro embaixo de um CampoRotulado (o CampoRotulado do Plus não tem prop de erro: a tela põe este texto embaixo). */
+export function ErroDoCampo({ texto }: { texto?: string }) {
+  return texto ? <p role="alert" className="mt-1.5 text-[12px] text-vermelho">{texto}</p> : null;
 }
 
 /** Título de grupo dentro de fichas e menus: 10 px, caixa alta, espaçado. */
@@ -116,9 +121,9 @@ export function Dica({ texto, lado = "top", children }: { texto: string; lado?: 
     <Tooltip.Root>
       <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
       <Tooltip.Portal>
-        <Tooltip.Content side={lado} sideOffset={8} className="z-50 rounded-lg bg-texto px-2.5 py-1.5 text-[12.5px] font-medium text-superficie shadow-pop">
+        <Tooltip.Content side={lado} sideOffset={8} className="z-50 rounded-lg bg-[#1b1a18] px-2.5 py-1.5 text-[12.5px] font-medium text-white shadow-lg">
           {texto}
-          <Tooltip.Arrow className="fill-texto" />
+          <Tooltip.Arrow className="fill-[#1b1a18]" />
         </Tooltip.Content>
       </Tooltip.Portal>
     </Tooltip.Root>
@@ -131,7 +136,7 @@ export function MenuSuspenso({ gatilho, children, alinhar = "end" }: { gatilho: 
     <Popover.Root>
       <Popover.Trigger asChild>{gatilho}</Popover.Trigger>
       <Popover.Portal>
-        <Popover.Content align={alinhar} sideOffset={8} className="z-50 w-56 rounded-2xl border border-borda bg-superficie p-1.5 text-texto shadow-pop">
+        <Popover.Content align={alinhar} sideOffset={8} className="z-50 w-56 rounded-2xl border border-borda bg-superficie p-1.5 text-texto shadow-[0_20px_50px_-15px_rgba(0,0,0,0.35)]">
           {children}
         </Popover.Content>
       </Popover.Portal>
@@ -142,8 +147,8 @@ export function MenuSuspenso({ gatilho, children, alinhar = "end" }: { gatilho: 
 export function ItemMenu({ icone: Icone, texto, perigo, aoClicar }: { icone: LucideIcon; texto: string; perigo?: boolean; aoClicar: () => void }) {
   return (
     <Popover.Close asChild>
-      <button type="button" onClick={aoClicar} className={cn("flex h-9 w-full items-center gap-2.5 rounded-xl px-3 text-left text-[13.5px] transition hover:bg-campo", perigo && "text-perigo")}>
-        <Icone className={cn("size-4 shrink-0", perigo ? "text-perigo" : "text-texto-2")} />
+      <button type="button" onClick={aoClicar} className={cn("flex h-9 w-full items-center gap-2.5 rounded-xl px-3 text-left text-[13.5px] transition hover:bg-campo", perigo && "text-vermelho")}>
+        <Icone className={cn("size-4 shrink-0", perigo ? "text-vermelho" : "text-texto-2")} />
         {texto}
       </button>
     </Popover.Close>
@@ -177,7 +182,7 @@ export function Vazio({ icone: Icone, titulo, texto, acao }: { icone: LucideIcon
 export function Esqueleto({ quantos = 6, altura = 180, forma = "cartoes", className }: { quantos?: number; altura?: number; forma?: "cartoes" | "linhas"; className?: string }) {
   if (forma === "linhas")
     return (
-      <div className={cn("overflow-hidden rounded-cartao border border-borda bg-superficie", className)}>
+      <div className={cn("overflow-hidden rounded-[20px] border border-borda bg-superficie", className)}>
         {Array.from({ length: quantos }).map((_, i) => (
           <div key={i} className="flex items-center gap-3 border-b border-borda px-4 last:border-0" style={{ height: altura }}>
             <div className="size-6 animate-pulse rounded-lg bg-campo" />
@@ -190,7 +195,7 @@ export function Esqueleto({ quantos = 6, altura = 180, forma = "cartoes", classN
   return (
     <div className={cn("grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-3.5", className)}>
       {Array.from({ length: quantos }).map((_, i) => (
-        <div key={i} className="animate-pulse rounded-cartao bg-campo" style={{ height: altura }} />
+        <div key={i} className="animate-pulse rounded-[20px] bg-campo" style={{ height: altura }} />
       ))}
     </div>
   );
@@ -200,21 +205,9 @@ export function Esqueleto({ quantos = 6, altura = 180, forma = "cartoes", classN
 export function BarraOcupada({ className }: { className?: string }) {
   return (
     <div className={cn("h-1 overflow-hidden rounded-full bg-campo", className)}>
-      <div className="h-full w-1/3 rounded-full bg-acento" style={{ animation: "deslizar 1.2s ease-in-out infinite" }} />
+      <div className="h-full w-1/3 rounded-full bg-verde" style={{ animation: "deslizar 1.2s ease-in-out infinite" }} />
     </div>
   );
-}
-
-/** Erro no fim do formulário: rola até ele e repete num balão. */
-export function AvisoErro({ texto, className }: { texto: string; className?: string }) {
-  const ref = useRef<HTMLParagraphElement>(null);
-  useEffect(() => {
-    if (!texto) return;
-    ref.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
-    toast.error(texto);
-  }, [texto]);
-  if (!texto) return null;
-  return <p ref={ref} role="alert" className={cn("rounded-xl bg-perigo/10 px-3 py-2 text-[13px] text-perigo", className)}>{texto}</p>;
 }
 
 /** true enquanto a janela tiver menos que `limite` px de largura. */

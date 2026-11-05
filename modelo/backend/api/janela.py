@@ -1,12 +1,12 @@
 """Modo navegador: o que a janela própria faz pelo pywebview, aqui pelo Python.
-Só vale quando o programa abriu com `--navegador` (o navegador roda neste mesmo PC)."""
-import tkinter
-from tkinter import filedialog
 
+Só funciona quando o sistema foi aberto com `--navegador` (scripts\\ABRIR_NO_NAVEGADOR.bat):
+o navegador roda neste mesmo computador, então as janelas do Windows aparecem para quem usa.
+"""
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from janela import ponte
+from janela import acoes
 
 rota = APIRouter(prefix="/api/janela", tags=["janela"])
 
@@ -27,52 +27,37 @@ class Link(BaseModel):
     endereco: str
 
 
-def _exigir():
+def _exigir(logado=True):
     if not LIGADA["sim"]:
         raise HTTPException(404, "Só no modo navegador.")
-
-
-def _tk():
-    raiz = tkinter.Tk()
-    raiz.withdraw()
-    raiz.attributes("-topmost", True)  # a janela do Windows aparece na frente do navegador
-    return raiz
+    # no Plus: se `logado` e ninguém entrou (servicos.sessao.usuario_logado()), recusa com 403
 
 
 @rota.post("/escolher-pasta")
 def escolher_pasta(d: Caminho):
-    _exigir()
-    raiz = _tk()
-    try:
-        return {"caminho": filedialog.askdirectory(initialdir=d.caminho or ponte.area_de_trabalho()) or ""}
-    finally:
-        raiz.destroy()
+    _exigir(logado=False)   # a tela de entrada usa para escolher a pasta da base
+    return {"caminho": acoes.escolher_pasta(d.caminho)}
 
 
 @rota.post("/salvar-arquivo")
 def salvar_arquivo(d: Arquivo):
     _exigir()
-    raiz = _tk()
-    try:
-        caminho = filedialog.asksaveasfilename(initialdir=ponte.area_de_trabalho(), initialfile=d.nome)
-    finally:
-        raiz.destroy()
-    return {"caminho": ponte.gravar(caminho, d.dados) if caminho else ""}
+    return {"caminho": acoes.salvar_arquivo(d.nome, d.dados)}
 
 
 @rota.post("/abrir-pasta")
 def abrir_pasta(d: Caminho):
     _exigir()
-    return {"ok": ponte.abrir_pasta_do_arquivo(d.caminho)}
+    return {"ok": acoes.abrir_pasta_do_arquivo(d.caminho)}
 
 
 @rota.post("/abrir-arquivo")
 def abrir_arquivo(d: Caminho):
     _exigir()
-    return {"ok": ponte.abrir_arquivo(d.caminho)}
+    return {"ok": acoes.abrir_arquivo(d.caminho)}
 
 
 @rota.post("/abrir-link")
 def abrir_link(d: Link):
     _exigir()
-    return {"ok": ponte.abrir_link(d.endereco)}
+    return {"ok": acoes.abrir_link(d.endereco)}
