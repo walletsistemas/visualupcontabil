@@ -533,12 +533,14 @@ Quando: lista sem itens ou busca sem resultado. Sempre diga **o que fazer**.
 
 ### `Esqueleto`
 
-Blocos pulsando no formato do que vai chegar (grade de cartões de 320 px). Props: `quantos`
-(padrão 6), `altura` (px, padrão 180), `className`. Quando: primeira carga (`q.isLoading`). Não
-use giro solto no meio da tela.
+Blocos pulsando no formato do que vai chegar. Props: `forma` (`"cartoes"` = grade de cartões
+de 320 px, padrão · `"linhas"` = lista/tabela), `quantos` (padrão 6), `altura` (px: altura do
+cartão, padrão 180; ou da linha, use 44 para lista e 32 para tabela), `className`. Quando:
+primeira carga (`q.isLoading`). Não use giro solto no meio da tela.
 
 ```tsx
 {q.isLoading ? <Esqueleto /> : ...}
+{q.isLoading ? <Esqueleto forma="linhas" altura={44} quantos={8} /> : ...}
 ```
 
 ### `BarraOcupada`
@@ -628,8 +630,9 @@ Quadradinho de cor + nome (+ número) da legenda. Props: `cor`, `texto`, `valor?
 significa. Props: `cor`, `rotulo`, `valor`, `referencia?`, `explica`, `alerta?` (número em
 vermelho), `aoClicar?` (vira botão, com seta no hover; leva à lista filtrada).
 
-`FaixaIndicadores`: junta os indicadores **num cartão só**, com divisórias de 1 px (2 colunas;
-4 a partir de `@3xl`). Nada de caixinhas soltas.
+`FaixaIndicadores`: junta os indicadores **num cartão só**, com divisórias de 1 px. Cabem
+quantos indicadores quiser (2, 3, 4...): cada um tem no mínimo 180 px e a faixa quebra a linha
+sozinha (`repeat(auto-fit, minmax(180px, 1fr))`). Nada de caixinhas soltas.
 
 ```tsx
 <FaixaIndicadores>

@@ -35,4 +35,12 @@ export const SECOES: Secao[] = [
   },
 ];
 
+/**
+ * PEDIDO ao abrir uma tela: «ir para a lista JÁ filtrada» ou «com o item 7 aberto».
+ * Vai no endereço interno (search do TanStack Router); a tela lê ao abrir.
+ * Use em: números do painel que levam à lista, busca Ctrl+K que abre um item, atalhos.
+ */
+export type Pedido = { filtro?: string; abrir?: number };
+export type IrPara = (chave: string, pedido?: Pedido) => void;
+
 export const acharTela = (chave: string) => SECOES.flatMap((s) => s.telas).find((t) => t.chave === chave);

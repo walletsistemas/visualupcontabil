@@ -77,7 +77,7 @@ export function Entrada({ aoEntrar }: { aoEntrar: () => void }) {
             onSubmit={entrar}
             className={cn(
               "rounded-[calc(var(--raio-janela)+4px)] border border-white/40 bg-vidro px-8 pb-7 pt-16 backdrop-blur-vidro backdrop-saturate-150",
-              "shadow-[0_40px_100px_-30px_rgba(60,45,30,0.35)] dark:border-white/10 dark:shadow-[0_40px_100px_-30px_rgba(0,0,0,0.7)]",
+              "shadow-janela dark:border-white/10",
             )}
           >
             <div className="mb-5 h-6 text-center">
@@ -157,7 +157,7 @@ export function Entrada({ aoEntrar }: { aoEntrar: () => void }) {
 /** A bolinha acima do cartão: iniciais (ou foto) quando acha a pessoa; contorno neutro antes. */
 function AvatarEntrada({ nome, tamanho = 96 }: { nome: string; tamanho?: number }) {
   return (
-    <div className="relative rounded-full p-[3px] shadow-[0_18px_40px_-12px_rgba(0,0,0,0.55)]" style={{ width: tamanho, height: tamanho, background: "rgba(255,255,255,0.85)" }}>
+    <div className="relative rounded-full p-[3px] shadow-pop" style={{ width: tamanho, height: tamanho, background: "rgba(255,255,255,0.85)" }}>
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.div
           key={nome ? iniciais(nome) : "ninguem"}

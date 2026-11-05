@@ -94,6 +94,8 @@ Se a entrevista pediu "menos animação" ou "mais sério":
 
 | Pedido | O que mudar |
 |---|---|
+| **Discreto** (resposta "Discretas" da entrevista) | Receita no comentário de `movimento.ts`: damping 50/45/50/40 nas molas, `cascata` com delay 0.01 e máximo 6, tremida da entrada com metade da amplitude. Continua deslizando, sem balanço e mais curto. |
+| **Mínimo** (resposta "Mínimas") | `reducedMotion="always"` no `main.tsx` (ver a última linha desta tabela). |
 | Menos balanço | Em `movimento.ts`, aumente o `damping` (ex.: `MOLA` 38 → 50, `MOLA_JANELA` 32 → 45, `MOLA_RAPIDA` 36 → 48, `MOLA_MACIA` 26 → 40). Mola com damping alto chega sem passar do ponto. |
 | Mais rápido | Aumente o `stiffness` (ex.: 420 → 600) e diminua a `duration` da `cascata` (0.25 → 0.15). |
 | Sem cascata | Faça `cascata` devolver nada: `export const cascata = (_i: number) => ({});`. Os cartões aparecem todos juntos. |

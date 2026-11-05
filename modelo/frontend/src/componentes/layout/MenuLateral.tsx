@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { AnimatePresence, motion } from "motion/react";
-import { ChevronDown, ChevronsUpDown, Droplet, Layers, LogOut, Moon, MousePointerClick, PanelLeftClose, PanelLeftOpen, Search, UserRound } from "lucide-react";
+import { ChevronDown, ChevronsUpDown, Droplet, Layers, LogOut, Moon, MousePointerClick, PanelLeftClose, PanelLeftOpen, Search, Settings2, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { cn, iniciais } from "@/lib/utils";
 import { aplicarDesfoque, desfoqueReduzido } from "@/lib/desfoque";
 import { MOLA } from "@/tema/movimento";
 import { useJanelaEstreita } from "@/componentes/ui/pecas";
-import { SECOES } from "./telas";
+import { SECOES, type IrPara } from "./telas";
 
 function lerSalvo<T>(chave: string, padrao: T): T {
   try {
@@ -38,14 +38,15 @@ const FECHADO = 72;
  * - «Menu automático»: fica recolhido e abre POR CIMA da tela quando o mouse chega.
  *   Janela estreita (< 1100 px) liga isso sozinho.
  * - Embaixo, a conta: menu com preferências (tema, menu automático, reduzir desfoque) e sair.
+ *   SEM LOGIN: não passe `usuario` nem `aoSair` — vira um botão «Preferências» com o mesmo menu.
  */
 export function MenuLateral({ usuario, tela, tema, aoIr, aoTrocarTema, aoSair }: {
-  usuario: { nome: string; cargo: string };
+  usuario?: { nome: string; cargo: string };
   tela: string;
   tema: "claro" | "escuro";
-  aoIr: (chave: string) => void;
+  aoIr: IrPara;
   aoTrocarTema: () => void;
-  aoSair: () => void;
+  aoSair?: () => void;
 }) {
   const [semDesfoque, setSemDesfoque] = useState(desfoqueReduzido);
   const [fixoRecolhido, setFixoRecolhido] = useState(() => lerSalvo("menu_recolhido", false));
@@ -105,7 +106,7 @@ export function MenuLateral({ usuario, tela, tema, aoIr, aoTrocarTema, aoSair }:
           onMouseLeave={automatico ? saiu : undefined}
           className={cn(
             "absolute inset-y-0 left-0 flex flex-col overflow-hidden bg-menu text-tinta transition-shadow",
-            automatico && !recolhido && "shadow-[12px_0_40px_-12px_rgba(0,0,0,0.55)]",
+            automatico && !recolhido && "shadow-janela",
           )}
         >
           {/* brilho suave nos cantos, como o vidro do macOS */}
@@ -251,20 +252,24 @@ export function MenuLateral({ usuario, tela, tema, aoIr, aoTrocarTema, aoSair }:
             <Popover.Root onOpenChange={setContaAberta}>
               <Popover.Trigger asChild>
                 <button
-                  aria-label={`Conta de ${usuario.nome}`}
+                  aria-label={usuario ? `Conta de ${usuario.nome}` : "Preferências"}
                   className={cn(
                     "flex w-full items-center gap-3 rounded-xl p-2 text-left outline-none transition hover:bg-tinta/[0.06] data-[state=open]:bg-tinta/[0.08]",
                     recolhido && "justify-center p-1",
                   )}
                 >
-                  <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-acento text-[13px] font-semibold text-sobre-acento ring-2 ring-tinta/15">
-                    {iniciais(usuario.nome)}
-                  </div>
+                  {usuario ? (
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-acento text-[13px] font-semibold text-sobre-acento ring-2 ring-tinta/15">
+                      {iniciais(usuario.nome)}
+                    </div>
+                  ) : (
+                    <Settings2 className="size-[19px] shrink-0 text-tinta/70" strokeWidth={1.75} />
+                  )}
                   {!recolhido && (
                     <>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-[13px] font-semibold">{usuario.nome}</p>
-                        <p className="truncate text-[11.5px] text-tinta/70 dark:text-tinta/50">{usuario.cargo}</p>
+                        <p className="truncate text-[13px] font-semibold">{usuario?.nome ?? "Preferências"}</p>
+                        {usuario && <p className="truncate text-[11.5px] text-tinta/70 dark:text-tinta/50">{usuario.cargo}</p>}
                       </div>
                       <ChevronsUpDown className="size-4 text-tinta/35" />
                     </>
@@ -278,13 +283,17 @@ export function MenuLateral({ usuario, tela, tema, aoIr, aoTrocarTema, aoSair }:
                   sideOffset={10}
                   className="z-50 w-[256px] rounded-2xl border border-borda bg-superficie p-1.5 text-texto shadow-pop"
                 >
-                  <div className="px-3 py-2">
-                    <p className="truncate text-[13px] font-semibold">{usuario.nome}</p>
-                    <p className="truncate text-[12px] text-texto-3">{usuario.cargo}</p>
-                  </div>
-                  <div className="my-1 h-px bg-borda" />
-                  <ItemConta icone={UserRound} texto="Meu perfil" aoClicar={() => toast("Aqui abre a janela de perfil.")} />
-                  <div className="my-1 h-px bg-borda" />
+                  {usuario && (
+                    <>
+                      <div className="px-3 py-2">
+                        <p className="truncate text-[13px] font-semibold">{usuario.nome}</p>
+                        <p className="truncate text-[12px] text-texto-3">{usuario.cargo}</p>
+                      </div>
+                      <div className="my-1 h-px bg-borda" />
+                      <ItemConta icone={UserRound} texto="Meu perfil" aoClicar={() => toast("Aqui abre a janela de perfil.")} />
+                      <div className="my-1 h-px bg-borda" />
+                    </>
+                  )}
                   <p className="px-3 pb-1 pt-1.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-texto-3">Preferências</p>
                   <ItemConta
                     icone={MousePointerClick}
@@ -307,8 +316,12 @@ export function MenuLateral({ usuario, tela, tema, aoIr, aoTrocarTema, aoSair }:
                       setSemDesfoque(!semDesfoque);
                     }}
                   />
-                  <div className="my-1 h-px bg-borda" />
-                  <ItemConta icone={LogOut} texto="Sair" aoClicar={aoSair} />
+                  {aoSair && (
+                    <>
+                      <div className="my-1 h-px bg-borda" />
+                      <ItemConta icone={LogOut} texto="Sair" aoClicar={aoSair} />
+                    </>
+                  )}
                 </Popover.Content>
               </Popover.Portal>
             </Popover.Root>

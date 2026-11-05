@@ -12,7 +12,8 @@
 
 ## Bloco 1 · Identidade
 
-**1. Qual é o nome que aparece na janela e no menu?**
+**1. Qual é o nome que aparece na janela e no menu?** E quem publica (nome da empresa ou
+pessoa, vai no instalador)?
 Ex.: o nome atual do programa. Também: tem logo? Em que formato (PNG/SVG)? Tem versão clara e
 escura? *(Sem logo: o kit usa um quadrado com ícone, `Marca` em `MenuLateral.tsx`.)*
 
@@ -33,7 +34,8 @@ ajuste `--sobre-acento`). Avise se a cor da marca é vermelha/laranja: ela compe
 `--perigo`/`--alerta`, então escolha outra para "erro".
 
 **4. Tema escuro?**
-- Claro e escuro, a pessoa escolhe no menu da conta *(recomendado)*
+- Claro e escuro, a pessoa escolhe no menu da conta *(recomendado; sem login, o mesmo menu
+  vira "Preferências" no rodapé do menu lateral)*
 - Só claro · Só escuro · Segue o Windows
 
 ---
@@ -54,8 +56,9 @@ ajuste `--sobre-acento`). Avise se a cor da marca é vermelha/laranja: ela compe
 
 **8. Animações?** Mostre os GIFs de [../imagens/animacoes/](../imagens/animacoes/).
 - Completas, com mola (menu deslizando, janelas crescendo, cartões em cascata) *(recomendado)*
-- Discretas: só aparecer/sumir, mais rápidas, sem balanço
-- Mínimas (o kit já respeita "reduzir animações" do Windows de qualquer jeito)
+- Discretas: continuam deslizando, mas mais curtas e sem balanço (receita "Discreto" em `movimento.ts`)
+- Mínimas: só aparecer/sumir (`reducedMotion="always"`)
+(O kit já respeita "reduzir animações" do Windows de qualquer jeito.)
 
 **9. Densidade?**
 - Confortável: campos de 40 px, linhas de lista de 44 px *(recomendado para cadastro)*

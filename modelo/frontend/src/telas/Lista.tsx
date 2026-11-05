@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "motion/react";
 import { Download, LayoutGrid, List, MoreHorizontal, Pencil, Plus, SearchX, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { exemploApi } from "@/api/exemplo";
 import { CabecalhoTela } from "@/componentes/layout/JanelaPrincipal";
+import type { Pedido } from "@/componentes/layout/telas";
 import { Botao } from "@/componentes/ui/botao";
 import { CampoBusca } from "@/componentes/ui/campo";
 import { Gaveta } from "@/componentes/ui/dialogo";
@@ -23,12 +24,16 @@ const dataBr = (iso: string) => iso.split("-").reverse().join("/");
  * CADASTRO: barra de ferramentas (filtro, busca, contagem, modo de ver, botão principal, «…»),
  * grade de CARTÕES ou LISTA, e a FICHA lateral (gaveta) ao clicar.
  */
-export function Lista({ aoNovo }: { aoNovo: () => void }) {
+export function Lista({ aoNovo, pedido = {} }: { aoNovo: () => void; pedido?: Pedido }) {
   const q = useQuery({ queryKey: ["itens"], queryFn: exemploApi.itens });
   const [busca, setBusca] = useState("");
   const [modo, setModo] = useState<"cartoes" | "lista">("cartoes");
-  const [filtro, setFiltro] = useState<"todos" | "abertos">("todos");
+  const [filtro, setFiltro] = useState<"todos" | "abertos">(pedido.filtro === "abertos" ? "abertos" : "todos");
   const [aberto, setAberto] = useState<Item | null>(null);
+  // pedido «abrir o item N» (busca Ctrl+K, atalhos): abre a ficha assim que a lista chega
+  useEffect(() => {
+    if (pedido.abrir && q.data) setAberto(q.data.find((i) => i.id === pedido.abrir) ?? null);
+  }, [pedido.abrir, q.data]);
 
   const itens = (q.data ?? [])
     .filter((i) => filtro === "todos" || i.situacao !== "concluido")

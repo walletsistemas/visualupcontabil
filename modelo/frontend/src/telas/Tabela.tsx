@@ -74,7 +74,7 @@ export function Tabela() {
                   className={cn(
                     "absolute inset-x-0 flex items-center text-[13px]",
                     v.index % 2 ? "bg-zebra" : "",
-                    sel ? "bg-acento/15 shadow-[inset_3px_0_0_var(--acento)]" : "hover:bg-campo",
+                    sel ? "bg-acento/15 before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:bg-acento" : "hover:bg-campo",
                   )}
                   style={{ top: v.start, height: v.size }}
                 >

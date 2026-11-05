@@ -53,7 +53,10 @@ preso ao endereço. Mesma porta = preferências preservadas.
 `%PROGRAMDATA%\MeuSistema` se ela não existir. Guarda `programa_aberto.lock`, `porta.txt` e
 `janela\` (dados do WebView2). O `ABRIR.bat` define `MEU_SISTEMA_DADOS=%LOCALAPPDATA%\MeuSistema_TESTE`
 para os testes não se misturarem com o uso real. Na cirurgia, renomeie a variável e a pasta
-com o nome do programa da pessoa.
+(`PASTA` em `app.py`: sem acento nem espaço) com o nome do programa da pessoa.
+
+⚠ Esta pasta é **da casca**. Os dados do **motor** (banco, arquivos) continuam onde o motor
+manda; para testar, isole-os do jeito do motor (ver [05](05-migrar-do-pyqt.md), Passo 2).
 
 ## Os 4 jeitos de abrir
 
@@ -67,14 +70,16 @@ com o nome do programa da pessoa.
 `--dev` e `--sem-janela` ligam o modo `DEV` (`/api/docs` aberto e CORS liberado só para
 `http://localhost:5173`).
 
-E sem Python nenhum: `ABRIR.bat vitrine` (ou `npm run dev`) abre só as telas no Vite. Sem
-`#t=` no endereço, as funções de `src/api/*.ts` devolvem os **dados inventados** de
-`src/dados/exemplo.ts` (ver `ABERTO_PELO_SISTEMA` abaixo).
+`ABRIR.bat vitrine` abre as telas no Vite (recarregam ao salvar) e, numa janela à parte, o
+Python de teste (`--sem-janela`). No **modelo**, sem `#t=` no endereço, `src/api/exemplo.ts`
+devolve os **dados inventados** de `src/dados/exemplo.ts` (ver `ABERTO_PELO_SISTEMA` abaixo).
+Depois da cirurgia, as telas da pessoa chamam o Python de teste direto (`cliente.ts` já aponta
+o Vite para `127.0.0.1:8765` com a senha `dev`).
 
 ## As camadas
 
 ```text
- backend/motor/        regras antigas, banco, leitura de arquivos  (o código da pessoa)
+ <raiz>/motor/ (etc.)  regras antigas, banco, leitura de arquivos  (o código da pessoa, NO LUGAR DE SEMPRE)
       ▲  importado por
  backend/servicos/     regras que estavam presas nas telas Qt, em funções Python puras
       ▲  chamado por
@@ -87,7 +92,7 @@ E sem Python nenhum: `ABRIR.bat vitrine` (ou `npm run dev`) abre só as telas no
 
 | Camada | Regra | Exemplo no modelo |
 |---|---|---|
-| `backend/motor/` | Entra o código do sistema antigo **mudando o mínimo** (só imports, se precisar). Sem FastAPI, sem tela. `app.py` põe esta pasta no `sys.path`, então imports antigos do tipo `import banco` continuam funcionando. | `motor/dados_exemplo.py` (`ler_itens`, `gravar_item`) |
+| motor antigo (na raiz do projeto) | **Não muda de lugar**: o programa antigo continua usando enquanto a casca nova não substitui. `app.py` põe a raiz do projeto (`RAIZ`) no `sys.path`, então `from motor import banco` funciona dentro de `servicos/`. Sem FastAPI, sem tela. | no modelo, o papel do motor é feito pelos dados de `servicos/exemplo.py` |
 | `backend/servicos/` | As regras que estavam escritas dentro dos `QWidget` (validar, montar lista, decidir quem pode) viram funções aqui, com o **mesmo comportamento**. Sem Qt, sem FastAPI. Erro de regra = `raise ValueError("motivo para a pessoa ler")`. | `servicos/exemplo.py` (`listar`, `salvar`) |
 | `backend/api/` | Uma porta por assunto (`APIRouter(prefix="/api/<assunto>")`). Valida com Pydantic, chama o serviço, converte `ValueError` em `HTTPException(400, motivo)`. **Nada de regra aqui.** Registre em `criar_api` com `app.include_router(...)`. | `api/exemplo.py` |
 | `frontend/src/api/*.ts` | Uma função por porta, usando `api.get/post/put/del` de `cliente.ts`. É o único lugar das telas que conhece endereços `/api/...`. | `src/api/exemplo.ts` |
@@ -113,7 +118,7 @@ def salvar(d: NovoItem):
 def salvar(nome: str, codigo: str) -> None:
     if len(nome.strip()) < 3:
         raise ValueError("Escreva pelo menos 3 letras no nome.")  # o motivo vai para o balão da tela
-    dados_exemplo.gravar_item({"nome": nome.strip(), "codigo": codigo})
+    _ITENS.append(...)  # no projeto real: motor.algo.gravar(...) — o motor antigo, importado
 ```
 
 ## Ponte com o Windows

@@ -13,13 +13,14 @@ cirurgia, troque pelo nome que saiu da entrevista (lista no fim do capítulo).
 |---|---|
 | `ABRIR.bat` | Janela própria, como o instalado. Monta as telas (`npm run build`) e roda `python backend\app.py`. |
 | `ABRIR.bat navegador` | As telas no navegador padrão (`python backend\app.py --navegador`). |
-| `ABRIR.bat vitrine` | Só as telas, **sem Python**, no Vite (`npm run dev`, `http://localhost:5173`), com os dados inventados. Recarrega ao salvar o código. |
+| `ABRIR.bat vitrine` | As telas no Vite (`npm run dev`, `http://localhost:5173`), recarregando ao salvar o código, e o **Python de teste** (`--sem-janela`, porta 8765, senha `dev`) numa janela à parte. No modelo, as telas de exemplo usam os dados inventados mesmo sem Python. |
 
 Na primeira vez, ele instala sozinho as bibliotecas das telas (`npm install`) e do Python
 (`pip install -r backend\requirements.txt`). Sempre define
 `MEU_SISTEMA_DADOS=%LOCALAPPDATA%\MeuSistema_TESTE`, para trava, porta e dados da janela de teste
-não se misturarem com o programa instalado. Se o motor da pessoa lê dados de uma pasta, faça os
-testes com uma **cópia** ou base de teste, nunca com os dados reais.
+não se misturarem com o programa instalado. ⚠ Essa variável **não** protege os dados do
+motor: acrescente no `ABRIR.bat` a variável (ou config) que aponta o motor para uma **cópia**
+dos dados, nunca os reais (ver [05](05-migrar-do-pyqt.md), Passo 2).
 
 Outros jeitos (direto pelo Python, ver [04-arquitetura.md](04-arquitetura.md)):
 
@@ -55,9 +56,9 @@ O que o `programa.spec` faz:
 | Parte | Valor | Por quê |
 |---|---|---|
 | Entrada | `..\backend\app.py` | O programa começa no `app.py`. |
-| `pathex` | `..\backend`, `..\backend\motor` | Acha `api`, `servicos`, `janela`, `motor` e os imports antigos do motor. |
+| `pathex` | `..\backend`, `..` | A casca e a raiz do projeto (onde o motor antigo continua). |
 | `datas` | `("..\frontend\dist", "telas")` | As telas vão junto, em `_internal\telas` (é onde `pasta_telas()` procura quando roda como `.exe`). |
-| `hiddenimports` | `collect_submodules` de `api`, `servicos`, `janela`, `motor` | Leva todos os módulos, mesmo os importados de jeito que o PyInstaller não enxerga. |
+| `hiddenimports` | `collect_submodules` de `api`, `servicos`, `janela` (acrescente o pacote do motor antigo, ex.: `"motor"`) | Leva todos os módulos, mesmo os importados de jeito que o PyInstaller não enxerga. |
 | `excludes` | `pytest`, `PyQt6`, `PySide6`, `qtpy` | **O Qt saiu na cirurgia**: não leve ~100 MB à toa. Se o motor antigo ainda importa Qt em algum canto, isso aparece aqui como erro: recorte essa parte antes. Não exclua `tkinter` (usado no modo navegador). |
 | `name` | `"MeuSistema"` (no `EXE` e no `COLLECT`) | Nome do `.exe` e da pasta. |
 | `console` | `False` | Sem janela preta. |
@@ -179,7 +180,7 @@ Python com **Pillow** (`pip install pillow`).
 
 | Arquivo | O quê |
 |---|---|
-| `backend/app.py` | `NOME = "Meu Sistema"`, a variável `MEU_SISTEMA_DADOS`, `background_color="#F4F0EA"` (= `--fundo` claro) |
+| `backend/app.py` | `NOME = "Meu Sistema"` (pode ter acento), `PASTA = "MeuSistema"` (nome da pasta: **sem acento nem espaço**), a variável `MEU_SISTEMA_DADOS`, `background_color="#F4F0EA"` (= `--fundo` claro) |
 | `ABRIR.bat` | `MEU_SISTEMA_DADOS=%LOCALAPPDATA%\MeuSistema_TESTE` |
 | `frontend/index.html` | `<title>Meu Sistema</title>` |
 | `frontend/src/componentes/layout/MenuLateral.tsx` | Nome e subtítulo da marca; `Marca` pelo logo |

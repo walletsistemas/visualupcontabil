@@ -15,6 +15,15 @@ export const MOLA_MACIA = { type: "spring", stiffness: 260, damping: 26 } as con
 /** Curva para o que não é mola (aparecer, sumir). */
 export const SUAVE = [0.22, 1, 0.36, 1] as const;
 
+/*
+ * RECEITAS (troque os valores acima):
+ * - Completo (padrão): como está.
+ * - Discreto: MOLA damping 50, MOLA_JANELA damping 45, MOLA_RAPIDA damping 50, MOLA_MACIA
+ *   damping 40; cascata com delay 0.01 e máx. 6; tremida do login com metade da amplitude.
+ *   (Continua deslizando, mas sem balanço e mais curto.)
+ * - Mínimo: no main.tsx, <MotionConfig reducedMotion="always"> (só aparecer/sumir).
+ */
+
 /** Itens de lista/grade entrando em cascata: cada um 25 ms depois do anterior (máx. 12). */
 export const cascata = (i: number) => ({
   initial: { opacity: 0, y: 8 },

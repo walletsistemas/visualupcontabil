@@ -4,7 +4,7 @@ setlocal
 cd /d "%~dp0"
 REM  ABRIR.bat            -> janela própria (como o instalado)
 REM  ABRIR.bat navegador  -> as telas no navegador padrão
-REM  ABRIR.bat vitrine    -> só as telas, sem Python (http://localhost:5173)
+REM  ABRIR.bat vitrine    -> telas que recarregam na hora (http://localhost:5173) + Python de teste
 REM  Os dados deste computador ficam numa pasta de teste, separada do uso real.
 set "MEU_SISTEMA_DADOS=%LOCALAPPDATA%\MeuSistema_TESTE"
 
@@ -14,6 +14,8 @@ if not exist frontend\node_modules (
 )
 
 if /i "%~1"=="vitrine" (
+  REM telas com recarga na hora + o Python de teste (porta 8765, senha "dev") numa janela à parte
+  start "Python de teste" python backendpp.py --sem-janela
   pushd frontend & call npm run dev & popd
   exit /b
 )

@@ -170,8 +170,23 @@ export function Vazio({ icone: Icone, titulo, texto, acao }: { icone: LucideIcon
   );
 }
 
-/** ESQUELETO: blocos pulsando no formato do que vai chegar (nunca um giro solto no meio da tela). */
-export function Esqueleto({ quantos = 6, altura = 180, className }: { quantos?: number; altura?: number; className?: string }) {
+/**
+ * ESQUELETO: blocos pulsando no formato do que vai chegar (nunca um giro solto no meio da tela).
+ * forma "cartoes" = grade de cartões · "linhas" = lista/tabela (linhas de `altura` px).
+ */
+export function Esqueleto({ quantos = 6, altura = 180, forma = "cartoes", className }: { quantos?: number; altura?: number; forma?: "cartoes" | "linhas"; className?: string }) {
+  if (forma === "linhas")
+    return (
+      <div className={cn("overflow-hidden rounded-cartao border border-borda bg-superficie", className)}>
+        {Array.from({ length: quantos }).map((_, i) => (
+          <div key={i} className="flex items-center gap-3 border-b border-borda px-4 last:border-0" style={{ height: altura }}>
+            <div className="size-6 animate-pulse rounded-lg bg-campo" />
+            <div className="h-3 flex-1 animate-pulse rounded-full bg-campo" style={{ maxWidth: `${40 + ((i * 17) % 35)}%` }} />
+            <div className="h-3 w-16 animate-pulse rounded-full bg-campo" />
+          </div>
+        ))}
+      </div>
+    );
   return (
     <div className={cn("grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-3.5", className)}>
       {Array.from({ length: quantos }).map((_, i) => (

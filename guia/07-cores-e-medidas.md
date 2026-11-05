@@ -257,6 +257,18 @@ Confira depois de criar: texto `--texto-3` legível sobre `--fundo` e `--superfi
 temas; selo de cada tom legível; foco (anel de acento) visível; os 7 `--g-*` distintos entre si
 e do fundo.
 
+### Ao aplicar a cor da marca num estilo pronto
+
+- `--acento` (claro) = a cor da marca; `--acento-texto` = um tom mais escuro para ler como texto.
+- No **escuro**: `--acento` pode ficar igual; `--acento-texto` vira um tom **claro** da marca.
+- Confira `--sobre-acento` (texto em cima do acento): branco na maioria; escuro se a marca for clara.
+- `--primario` (o botão principal) é neutro de propósito: grafite (Original), marinho (Sóbrio),
+  a própria marca (Moderno), preto (Minimalista). Se o marinho do Sóbrio brigar com a marca,
+  troque por grafite `#1f2937`.
+- `--marca` (item ativo do menu) costuma ser a cor da marca no claro.
+- Gráficos: se algum `--g-*` ficou parecido com a marca (ex.: no Sóbrio, `--g-5` é o azul do
+  acento antigo), troque para manter as 7 cores distintas.
+
 ## Cores fixas fora dos tokens (conferir ao trocar de estilo)
 
 Os raios internos seguem a escala por conta (ex.: a pílula do `Segmentado` é `rounded-[calc(var(--raio-m)-2px)]`, o cartão da entrada `calc(var(--raio-janela)+4px)`), e o balão de dica é invertido (`bg-texto text-superficie`), então tudo isso acompanha o estilo.

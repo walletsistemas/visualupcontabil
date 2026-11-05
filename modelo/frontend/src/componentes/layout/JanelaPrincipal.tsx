@@ -3,15 +3,18 @@ import { aplicarTema, type Tema } from "@/tema/tema";
 import { cn } from "@/lib/utils";
 import { BuscaRapida } from "./BuscaRapida";
 import { MenuLateral } from "./MenuLateral";
+import type { IrPara } from "./telas";
 
 /**
  * A JANELA PRINCIPAL: menu lateral à esquerda e a tela ocupando todo o resto.
  * SEM faixa de título em cima: a tela usa o espaço todo (a barra de título é a do Windows).
  */
-export function JanelaPrincipal({ tela, aoIr, aoSair, children }: {
+export function JanelaPrincipal({ tela, aoIr, aoSair, usuario, children }: {
   tela: string;
-  aoIr: (chave: string) => void;
-  aoSair: () => void;
+  aoIr: IrPara;
+  /** sem login: não passe `aoSair` nem `usuario` (o menu mostra só «Preferências») */
+  aoSair?: () => void;
+  usuario?: { nome: string; cargo: string };
   children: ReactNode;
 }) {
   const [tema, setTema] = useState<Tema>(() => (document.documentElement.classList.contains("escuro") ? "escuro" : "claro"));
@@ -24,7 +27,7 @@ export function JanelaPrincipal({ tela, aoIr, aoSair, children }: {
 
   return (
     <div className="flex h-full bg-fundo">
-      <MenuLateral usuario={{ nome: "Ana Souza", cargo: "Administradora" }} tela={tela} tema={tema} aoIr={aoIr} aoTrocarTema={trocarTema} aoSair={aoSair} />
+      <MenuLateral usuario={usuario} tela={tela} tema={tema} aoIr={aoIr} aoTrocarTema={trocarTema} aoSair={aoSair} />
       {/* @container: as telas se ajustam à LARGURA DISPONÍVEL (@3xl:...), não à da janela */}
       <main className="@container min-w-0 flex-1 overflow-auto">{children}</main>
       <BuscaRapida aoIr={aoIr} aoTrocarTema={trocarTema} aoSair={aoSair} />

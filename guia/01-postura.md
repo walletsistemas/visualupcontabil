@@ -54,6 +54,12 @@ rápido. É o que você vai fazer também.
 - **"Não sei programar em React."** — Não precisa. O usuário decide pela entrevista e pelas
   fotos; a IA faz.
 
+## E se o programa for pequeno?
+
+A casca tem dezenas de arquivos e o programa antigo pode ter um só. Não importa: a casca é
+copiada, não escrita, e é ela que traz menu, busca, janelas, tema escuro e instalador prontos.
+Programa pequeno = cirurgia de horas, não de dias. Faça igual.
+
 ## Quando parar e perguntar
 
 Só nestes casos, e com uma pergunta objetiva:

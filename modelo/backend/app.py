@@ -13,8 +13,9 @@ Jeitos de abrir:
   python app.py --sem-janela    -> servidor de TESTE: porta 8765, senha «dev» (Vite e testes)
   python app.py --dev           -> janela abrindo as telas do Vite (recarregam na hora)
 
-NA CIRURGIA: o motor antigo (regras, banco, leitura de arquivos) entra em `motor/` mudando o
-mínimo; o que estava preso nas telas Qt vira funções em `servicos/`; `api/` só repassa.
+NA CIRURGIA: o motor antigo (regras, banco, leitura de arquivos) FICA ONDE ESTÁ, na raiz do
+projeto (o programa antigo continua funcionando com ele). Esta casca só o importa: a raiz entra
+no sys.path abaixo. O que estava preso nas telas Qt vira funções em `servicos/`; `api/` só repassa.
 """
 import hmac
 import os
@@ -24,9 +25,11 @@ import sys
 import threading
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
-sys.path[:0] = [AQUI, os.path.join(AQUI, "motor")]
+RAIZ = os.path.dirname(AQUI)  # a raiz do projeto: onde o motor antigo já mora
+sys.path[:0] = [AQUI, RAIZ]
 
-NOME = "Meu Sistema"
+NOME = "Meu Sistema"   # aparece na janela (pode ter acento)
+PASTA = "MeuSistema"   # nome da pasta gravável: sem acento nem espaço
 DEV = "--dev" in sys.argv or "--sem-janela" in sys.argv
 NAVEGADOR = "--navegador" in sys.argv
 URL_VITE = "http://localhost:5173"
@@ -41,10 +44,12 @@ def pasta_telas() -> str:
 
 
 def pasta_gravavel() -> str:
-    """Onde o programa guarda o que é deste computador (config, trava, porta).
-    `MEU_SISTEMA_DADOS` troca a pasta (testes ficam isolados do uso real)."""
+    """Onde a CASCA guarda o que é deste computador (config, trava, porta, dados do WebView).
+    `MEU_SISTEMA_DADOS` troca a pasta. ⚠ Isto NÃO isola os dados do motor: veja como o motor
+    acha os dados dele (variável própria, caminho a partir de __file__, config) e aponte para
+    uma CÓPIA nos testes (guia/05, "Passo 2")."""
     pasta = (os.environ.get("MEU_SISTEMA_DADOS") or "").strip() or os.path.join(
-        os.environ.get("PROGRAMDATA", os.path.expanduser("~")), NOME.replace(" ", ""))
+        os.environ.get("PROGRAMDATA", os.path.expanduser("~")), PASTA)
     os.makedirs(pasta, exist_ok=True)
     return pasta
 

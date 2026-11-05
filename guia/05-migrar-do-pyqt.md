@@ -11,31 +11,46 @@ ANTES (Qt)                                   DEPOIS (kit)
 main.py → QApplication + QMainWindow          backend/app.py → FastAPI + pywebview (janela)
 telas/*.py (QWidget com regra dentro)    ─┬─► frontend/src/telas/*.tsx   (só mostra e pede)
                                           └─► backend/servicos/*.py      (a regra recortada)
-motor/ (cálculo, banco, leitura de arquivo) ─► backend/motor/  (o MESMO código, mudando o mínimo)
+motor/ (cálculo, banco, leitura de arquivo) ─► FICA ONDE ESTÁ  (a casca importa; o antigo segue usando)
 sinais/slots, QTimer, QThread              ─► chamadas /api + TanStack Query (refetch, mutate)
 QSS / setStyleSheet                        ─► tokens.css + Tailwind (nada de estilo solto)
 ```
 
 A pergunta para cada linha de código Qt é sempre: **isto é regra ou é tela?**
-- Regra (decide, calcula, valida, grava) → Python, em `servicos/` ou `motor/`.
+- Regra (decide, calcula, valida, grava) → Python, em `servicos/` (ou já está no motor).
 - Tela (mostra, organiza, pergunta) → React, com as peças do kit.
 
 ## Passo 1 · Esqueleto rodando (primeiras horas)
 
 1. Copie `modelo/backend` e `modelo/frontend` para o projeto (ex.: `backend/`, `frontend/`),
    além de `modelo/ABRIR.bat` e `modelo/empacotar/`.
-2. Troque `NOME` em `backend/app.py`, o `<title>` de `frontend/index.html`, a `Marca` do menu
-   e a variável `MEU_SISTEMA_DADOS` por nomes do projeto.
+2. Troque `NOME` e `PASTA` (sem acento) em `backend/app.py`, o `<title>` de
+   `frontend/index.html`, a `Marca` do menu e a variável `MEU_SISTEMA_DADOS` por nomes do projeto.
+   O `modelo/.gitignore` vem junto (tira `node_modules`, `dist`, `build` do git).
 3. Aplique as cores da entrevista em `frontend/src/tema/tokens.css` (ou cole um arquivo de
    `estilos-prontos/`).
-4. Rode `ABRIR.bat vitrine` (só telas) e `ABRIR.bat` (janela de verdade). Mostre ao usuário.
+4. Rode `ABRIR.bat vitrine` (telas no Vite) e `ABRIR.bat` (janela de verdade). Mostre ao usuário.
 5. Commit: `feat: esqueleto da casca nova`.
+6. **Não apague as telas de exemplo agora.** Cada tela nova entra ao lado; os exemplos saem
+   juntos no fim (`telas/Painel|Lista|Tabela|Formulario|Pecas.tsx`, `dados/exemplo.ts`,
+   `api/exemplo.ts`, `servicos/exemplo.py`, `api/exemplo.py` e as linhas deles em `main.tsx`,
+   `telas.ts`, `BuscaRapida.tsx` e `app.py`). Assim cada tela nova pode ter o seu commit.
 
 ## Passo 2 · Motor para dentro
 
-- Mova (ou referencie) o código que não é tela para `backend/motor/`. Ajuste só imports.
+- **Não mova o motor.** Ele continua onde está (o programa antigo é o oficial até o fim) e a
+  casca importa: `app.py` põe a raiz do projeto no `sys.path`. Se o motor estiver misturado com
+  as telas no mesmo arquivo, extraia só as funções de regra para `servicos/`.
+- **Isole os dados para testar.** Descubra como o motor acha os dados:
+  - por variável de ambiente → defina-a no `ABRIR.bat` e nos testes apontando para uma cópia;
+  - por caminho montado com `__file__` → crie uma variável que o substitua (mudança mínima:
+    `os.environ.get("X_DADOS", caminho_de_hoje)`), e use-a nos testes;
+  - por config → um config de teste.
+  Nos `pytest`, copie os dados para uma pasta temporária (`tmp_path`) em cada teste.
+- **No `.exe`**, `__file__` aponta para dentro de `_internal`: dados ao lado do código deixam de
+  ser achados. Leve o caminho dos dados para um config/variável (ou `pasta_gravavel()`).
 - Se o motor lia configurações com `QSettings`, troque por um arquivo `config.ini`/`json` na
-  pasta gravável (`pasta_gravavel()` em `app.py`). Mesmo conteúdo, mesmo comportamento.
+  pasta gravável. Mesmo conteúdo, mesmo comportamento.
 - Rode os testes que existirem. Nada deve mudar de resultado.
 
 ### O motor usa Qt?
@@ -122,7 +137,7 @@ mensagens. Se puder, escreva um `pytest` chamando o serviço com os dados de ant
 | `QCheckBox` | `CaixaSelecao` · `Interruptor` (preferência liga/desliga) | |
 | `QRadioButton` em grupo | `Segmentado` (2–4 opções) · `Escolha` (mais) | |
 | `QDateEdit`/`QCalendarWidget` | `SeletorData` · `SeletorHora` · `SeletorMes` | |
-| `QSpinBox`/`QDoubleSpinBox` | `CampoRotulado type="number"` ou texto com máscara | |
+| `QSpinBox`/`QDoubleSpinBox` | `CampoRotulado` de texto (`inputMode="decimal"`) + `lerNumeroBr` de `lib/numeros.ts` | `type="number"` não aceita vírgula; `setMaximum`/casas são regra: confira no Python |
 | `QProgressBar` | `BarraOcupada` (sem saber quanto falta) · `BarraPartes` (proporção) | |
 | `QToolTip` | `Dica` · ou `title` simples | |
 | `QMenu` (contexto / botão) | `MenuSuspenso` + `ItemMenu` | |
@@ -138,6 +153,9 @@ mensagens. Se puder, escreva um `pytest` chamando o serviço com os dados de ant
 - **Mudar dados**: `useMutation({ mutationFn, onSuccess: () => qc.invalidateQueries({ queryKey: ["clientes"] }) })`.
   Isso substitui o "emitir sinal para a outra janela recarregar".
 - **Algo muda por fora** (outro usuário na rede): `refetchInterval: 20_000` na consulta.
+- **Abrir outra tela já filtrada ou com um item aberto** (o que era `outra_janela.abrir(id)`):
+  `aoIr("lista", { filtro: "abertos" })` ou `aoIr("lista", { abrir: 7 })`. A tela recebe o
+  `pedido` (ver `Pedido` em `telas.ts` e o uso em `main.tsx`/`Lista.tsx`).
 - **Usuário logado, preferências**: guardados no Python (sessão) e lidos pela tela; o que é só
   visual (menu recolhido, tema) fica no `localStorage`.
 
@@ -156,13 +174,13 @@ mensagens. Se puder, escreva um `pytest` chamando o serviço com os dados de ant
 ## Armadilhas que já custaram caro
 
 - **Dois programas no mesmo dado**: durante a migração, o antigo e o novo podem estar
-  instalados juntos. Use pastas graváveis diferentes (`MEU_SISTEMA_DADOS`) e não deixe os dois
-  escreverem no mesmo arquivo temporário.
+  instalados juntos. Use pastas graváveis diferentes (`PASTA`/`MEU_SISTEMA_DADOS`) e não deixe
+  os dois escreverem no mesmo arquivo temporário.
 - **Testar no dado real**: nunca. Copie para uma pasta de teste.
 - **Nome do `.exe`**: se a versão nova vai **substituir** a antiga por atualização, mantenha o
   mesmo nome do executável e o mesmo `AppId` do instalador; senão o Windows fica com os dois.
 - **Pasta das telas no .exe**: o PyInstaller precisa levar `frontend/dist` (já está no `.spec`).
   Esquecer isso dá janela branca com "As telas não foram montadas".
-- **Fonte**: a Inter vai dentro do programa (`public/fontes`); não dependa de internet.
+- **Fonte**: a Inter vai dentro do programa (pacote `@fontsource-variable/inter`); não dependa de internet.
 - **Tamanho**: exclua `PyQt6`/`PySide6` do `.spec` quando o Qt sair, ou o instalador leva
   100 MB à toa.

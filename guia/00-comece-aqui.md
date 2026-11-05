@@ -37,6 +37,10 @@ fez essa troca em **2 dias**.
    - **Motor**: o que NÃO é tela (cálculos, banco, leitura de PDF/Excel, regras). Isso fica.
    - **Regras presas nas telas**: validações, `if` de permissão, montagem de listas escritas
      dentro dos `QWidget`. Isso será recortado para `servicos/` sem mudar o comportamento.
+   - **Regras escondidas nos widgets**: `setMaximum`/`setMinimum`, casas decimais, `setMaxLength`,
+     máscaras de entrada, itens fixos de `QComboBox`. São regras também: vão para o Python.
+   - **Onde ficam os dados**: como o motor acha o banco/arquivos (variável de ambiente, caminho
+     montado com `__file__`, config). Isso decide como isolar os testes (ver 05, Passo 2).
    - **Coisas do Windows**: escolher pasta, salvar arquivo, abrir arquivo, impressão.
 4. Procure testes existentes. Se não houver, anote 3–5 comportamentos-chave para conferir depois
    (ex.: "importar o arquivo X dá 42 linhas e total 1.234,56").
@@ -59,19 +63,22 @@ fez essa troca em **2 dias**.
 ### Fase 4 · Execução
 8. **Copie o modelo, não reescreva.** `modelo/backend` e `modelo/frontend` são o ponto de
    partida. Troque nomes, cores e telas de exemplo pelas do usuário.
-9. Motor antigo → `backend/motor/` (mudando o mínimo: só imports, se precisar).
+9. Motor antigo → **fica onde está** (o programa antigo continua usando). A casca só importa:
+   `backend/app.py` já põe a raiz do projeto no `sys.path`.
    Regra presa em tela Qt → função em `backend/servicos/` (mesmo comportamento).
    Cada assunto → uma porta fina em `backend/api/` → uma função em `frontend/src/api/`.
 10. Cada tela nova: use as peças de [08-componentes.md](08-componentes.md). Não invente peça
     nova se uma do kit resolve. Peça nova segue os tokens ([07-cores-e-medidas.md](07-cores-e-medidas.md)).
 11. A cada tela pronta: confira contra o programa antigo (mesmos dados → mesmo resultado),
-    tire uma foto, mostre ao usuário e faça **commit** ("feat: tela X na casca nova").
+    mostre ao usuário (foto da tela, por print ou pelo `npm run fotos` adaptado) e faça
+    **commit** ("feat: tela X na casca nova").
 12. Só apague o código Qt de uma tela depois que a nova estiver conferida. O programa antigo
     continua sendo o oficial até a nova versão estar completa.
 
 ### Fase 5 · Conferência e entrega
 13. Rode a lista de [12-conferencia.md](12-conferencia.md).
-14. Gere o instalador e entregue.
+14. Pergunte se o usuário quer o instalador agora; se sim, gere ([11](11-instalador.md)).
+    Gerar não é publicar: instalar nas máquinas dos outros só com pedido explícito.
 
 ## Nunca faça
 
@@ -79,7 +86,8 @@ fez essa troca em **2 dias**.
 - Usar cor, raio ou sombra soltos (`#3a7`, `rounded-[13px]`, `shadow-lg`) em vez dos tokens.
 - Deixar ação falhar calada: todo erro e todo "não pode" vira um balão com o motivo.
 - Abrir o programa da pessoa apontando para os **dados reais** dela durante os testes. Use uma
-  cópia ou pasta de teste (o modelo já separa com `MEU_SISTEMA_DADOS`).
+  cópia. ⚠ `MEU_SISTEMA_DADOS` só separa a pasta **da casca** (trava, porta, WebView); os dados
+  do **motor** precisam do isolamento dele (variável própria ou config apontando para a cópia).
 - Publicar, enviar ou instalar nas máquinas dos outros sem pedido explícito do usuário.
 - Colocar dados de clientes, senhas ou `.env` no git.
 

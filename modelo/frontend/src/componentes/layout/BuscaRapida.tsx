@@ -5,7 +5,7 @@ import { LayoutGrid, LogOut, Moon, Plus, Search, type LucideIcon } from "lucide-
 import { ITENS } from "@/dados/exemplo";
 import { semAcento } from "@/lib/utils";
 import { MOLA_RAPIDA } from "@/tema/movimento";
-import { SECOES } from "./telas";
+import { SECOES, type IrPara } from "./telas";
 
 const GRUPO =
   "[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:pb-1 [&_[cmdk-group-heading]]:pt-2 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-texto-3";
@@ -24,7 +24,7 @@ type Acao = { chave: string; nome: string; busca: string; icone: LucideIcon; ond
  * BUSCA RÁPIDA estilo Spotlight (Ctrl+K, ou o botão «Buscar» do menu):
  * ações do dia a dia, itens (depois de 2 letras) e todas as telas. Painel de VIDRO.
  */
-export function BuscaRapida({ aoIr, aoTrocarTema, aoSair }: { aoIr: (chave: string) => void; aoTrocarTema: () => void; aoSair: () => void }) {
+export function BuscaRapida({ aoIr, aoTrocarTema, aoSair }: { aoIr: IrPara; aoTrocarTema: () => void; aoSair?: () => void }) {
   const [aberta, setAberta] = useState(false);
   const [texto, setTexto] = useState("");
 
@@ -54,7 +54,7 @@ export function BuscaRapida({ aoIr, aoTrocarTema, aoSair }: { aoIr: (chave: stri
   const acoes: Acao[] = [
     { chave: "novo", nome: "Novo cadastro", busca: "criar adicionar", icone: Plus, onde: "Formulário", fazer: () => aoIr("formulario") },
     { chave: "tema", nome: "Trocar tema (claro / escuro)", busca: "tema claro escuro", icone: Moon, fazer: aoTrocarTema },
-    { chave: "sair", nome: "Sair", busca: "trocar usuario", icone: LogOut, fazer: aoSair },
+    ...(aoSair ? [{ chave: "sair", nome: "Sair", busca: "trocar usuario", icone: LogOut, fazer: aoSair }] : []),
   ];
   const itens = texto.trim().length >= 2 ? ITENS : [];
 
@@ -106,7 +106,7 @@ export function BuscaRapida({ aoIr, aoTrocarTema, aoSair }: { aoIr: (chave: stri
                 {itens.length > 0 && (
                   <Command.Group heading="Abrir item" className={GRUPO}>
                     {itens.map((i) => (
-                      <Item key={i.id} valor={`${i.nome} ${i.codigo} #${i.id}`} aoEscolher={() => executar(() => aoIr("lista"))}>
+                      <Item key={i.id} valor={`${i.nome} ${i.codigo} #${i.id}`} aoEscolher={() => executar(() => aoIr("lista", { abrir: i.id }))}>
                         <LayoutGrid className="size-[18px] text-texto-2" strokeWidth={1.75} />
                         <span className="truncate text-texto">{i.nome}</span>
                         <span className="ml-auto shrink-0 pl-4 text-[12px] tabular-nums text-texto-3">{i.codigo}</span>

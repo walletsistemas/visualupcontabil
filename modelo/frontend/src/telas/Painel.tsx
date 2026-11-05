@@ -10,6 +10,7 @@ import { BarraPartes, Barras, Chave, Colunas, FaixaIndicadores, Indicador, Paine
 import { COR_SITUACAO, ITENS, PESSOAS_EXEMPLO, ROTULO_SITUACAO, type Situacao } from "@/dados/exemplo";
 import { mesAtual } from "@/lib/datas";
 import { cascata } from "@/tema/movimento";
+import type { IrPara } from "@/componentes/layout/telas";
 
 const ORDEM: Situacao[] = ["concluido", "andamento", "atrasado", "pendente"];
 
@@ -17,7 +18,7 @@ const ORDEM: Situacao[] = ["concluido", "andamento", "atrasado", "pendente"];
  * PAINEL (dashboard): saudação, faixa de indicadores, e uma grade de cartões de gráfico
  * que se reorganiza pela largura disponível (@container).
  */
-export function Painel() {
+export function Painel({ aoIr }: { aoIr: IrPara }) {
   const [mes, setMes] = useState(mesAtual());
   const [visao, setVisao] = useState<"eu" | "equipe">("equipe");
   const cont = Object.fromEntries(ORDEM.map((s) => [s, ITENS.filter((i) => i.situacao === s).length])) as Record<Situacao, number>;
@@ -39,9 +40,9 @@ export function Painel() {
       <div className="flex flex-col gap-3.5 px-6">
         <motion.div {...cascata(0)}>
           <FaixaIndicadores>
-            <Indicador cor="var(--g-1)" rotulo="Concluídos" valor={cont.concluido} referencia={`de ${total}`} explica="entregues neste mês" aoClicar={() => {}} />
-            <Indicador cor="var(--g-5)" rotulo="Em andamento" valor={cont.andamento} referencia={`${pct(cont.andamento, total)}%`} explica="com alguém trabalhando" aoClicar={() => {}} />
-            <Indicador cor="var(--g-3)" rotulo="Atrasados" valor={cont.atrasado} explica="passaram do prazo" alerta aoClicar={() => {}} />
+            <Indicador cor="var(--g-1)" rotulo="Concluídos" valor={cont.concluido} referencia={`de ${total}`} explica="entregues neste mês" aoClicar={() => aoIr("lista")} />
+            <Indicador cor="var(--g-5)" rotulo="Em andamento" valor={cont.andamento} referencia={`${pct(cont.andamento, total)}%`} explica="com alguém trabalhando" aoClicar={() => aoIr("lista", { filtro: "abertos" })} />
+            <Indicador cor="var(--g-3)" rotulo="Atrasados" valor={cont.atrasado} explica="passaram do prazo" alerta aoClicar={() => aoIr("lista", { filtro: "abertos" })} />
             <Indicador cor="var(--g-4)" rotulo="Pendentes" valor={cont.pendente} explica="ainda não começaram" />
           </FaixaIndicadores>
         </motion.div>

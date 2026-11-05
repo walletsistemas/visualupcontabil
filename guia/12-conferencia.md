@@ -30,7 +30,7 @@
 - [ ] Com "reduzir animações" do Windows ligado, as telas continuam usáveis.
 
 ## Entrega
-- [ ] Fotos novas do sistema da pessoa (`npm run fotos` adaptado) em claro e escuro.
+- [ ] Fotos novas do sistema da pessoa em claro e escuro (`npm run fotos` adaptado, ou prints).
 - [ ] `docs/visual.md` com a receita da entrevista atualizada.
 - [ ] Instalador gerado e testado num PC (ou VM) limpo.
 - [ ] Nada de senha, `.env` ou dado de cliente no git.

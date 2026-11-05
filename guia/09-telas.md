@@ -45,8 +45,8 @@ Três lugares, sempre os três:
 
    ```tsx
    const telas: Record<string, ReactNode> = {
-     painel: <Painel />,
-     lista: <Lista aoNovo={() => irPara("formulario")} />,
+     painel: <Painel aoIr={irPara} />,
+     lista: <Lista key={JSON.stringify(pedido)} pedido={pedido} aoNovo={() => irPara("formulario")} />,
      // nova: <Nova />,
    };
    ```
@@ -55,6 +55,16 @@ Navegação: TanStack Router com histórico **na memória** (o endereço da jane
 `/` (entrada) e `/app/$tela`. Para ir a outra tela, a tela recebe uma função (ex.: `aoNovo`,
 `aoVoltar`) que chama `irPara(chave)`. Para abrir direto numa tela (fotos, testes), use
 `?tela=<chave>` no endereço.
+
+**Abrir já filtrada ou com um item aberto:** `irPara(chave, pedido)`, com
+`Pedido = { filtro?: string; abrir?: number }` (em `telas.ts`). O pedido vai no *search* da rota
+(`validateSearch` em `main.tsx`) e a tela recebe em `pedido`:
+- o filtro inicial sai de `pedido.filtro` (`useState(pedido.filtro === "abertos" ? ...)`);
+- `pedido.abrir` abre a ficha quando a lista chega (`useEffect` em `Lista.tsx`);
+- `key={JSON.stringify(pedido)}` recomeça a tela quando chega outro pedido.
+Exemplos no modelo: os números do `Painel` levam à lista filtrada; o item da busca Ctrl+K abre a
+ficha (`aoIr("lista", { abrir: i.id })`). Novos campos no pedido? Acrescente no tipo e no
+`validateSearch`.
 
 ---
 
@@ -261,8 +271,8 @@ Anatomia:
    que ensina ("Clique num número para ver a lista."), `SeletorMes` + `Segmentado` (só eu /
    equipe) na barra e "Relatório" em `acoes`.
 2. Coluna `flex flex-col gap-3.5 px-6`, cada bloco num `motion.div {...cascata(n)}`:
-   - `FaixaIndicadores` com 4 `Indicador` (2 colunas; 4 a partir de `@3xl`). Cada número clicável
-     leva à lista filtrada.
+   - `FaixaIndicadores` com 2 a 5 `Indicador` (a faixa se ajusta). Cada número clicável leva à
+     lista filtrada: `aoClicar={() => aoIr("lista", { filtro: "abertos" })}`.
    - Grade `grid gap-3.5 @4xl:grid-cols-2` com cartões de gráfico (`Painel` dos gráficos, com
      `className="h-full"` para igualar a altura).
    - Cartão largo (largura toda) para o gráfico de tempo (`Colunas`).
@@ -410,4 +420,9 @@ Escuro com usuário: `../imagens/escuro/entrada-com-usuario.png`.
 3. Foto da pessoa: troque as iniciais por `<img>` no `AvatarEntrada` quando houver foto.
 4. "Lembrar meu login": guarde só o usuário (nunca a senha) no `localStorage`.
 5. Ajuste as cores fixas dos clarões (`CLAROES`) à paleta escolhida.
-6. Sem login no programa antigo: tire a rota `/` e abra direto em `/app/<tela inicial>`.
+6. **Sem login** no programa antigo:
+   - em `main.tsx`, a rota `/` vira a tela inicial (ou `initialEntries: ["/app/<tela inicial>"]`)
+     e `Entrada.tsx` pode ser apagada;
+   - em `<JanelaPrincipal>`, **não passe** `usuario` nem `aoSair`: o rodapé do menu vira um botão
+     "Preferências" (engrenagem) com tema, menu automático e reduzir desfoque; "Meu perfil" e
+     "Sair" somem do menu e da busca Ctrl+K sozinhos.

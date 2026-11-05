@@ -75,10 +75,10 @@ export function Indicador({ cor, rotulo, valor, referencia, explica, alerta, aoC
   );
 }
 
-/** Faixa de indicadores num cartão só, com divisórias de 1 px (nada de caixinhas soltas). */
+/** Faixa de indicadores num cartão só, com divisórias de 1 px (nada de caixinhas soltas). Quantos couberem por linha. */
 export function FaixaIndicadores({ children }: { children: ReactNode }) {
   return (
-    <section className="grid grid-cols-2 gap-px overflow-hidden rounded-cartao border border-borda bg-borda shadow-cartao @3xl:grid-cols-4 [&>*]:bg-superficie">
+    <section className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-px overflow-hidden rounded-cartao border border-borda bg-borda shadow-cartao [&>*]:bg-superficie">
       {children}
     </section>
   );

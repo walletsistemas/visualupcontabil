@@ -46,7 +46,7 @@ Precisa de [Node.js](https://nodejs.org/) e [Python 3.12+](https://www.python.or
 ```bash
 modelo\ABRIR.bat vitrine
 ```
-Só as telas, no navegador, em http://localhost:5173.
+As telas no navegador, em http://localhost:5173 (com dados inventados).
 
 ```bash
 modelo\ABRIR.bat
