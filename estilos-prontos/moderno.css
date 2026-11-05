@@ -57,7 +57,7 @@
   --sombra-janela: 0 36px 90px -24px rgb(30 27 75 / 0.5);
   --desfoque: 28px;
 
-  --fonte: "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+  --fonte: "Inter Variable", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
 }
 
 .escuro {

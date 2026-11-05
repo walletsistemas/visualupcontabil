@@ -4,12 +4,8 @@
 /* Tema escuro: liga com a classe .escuro no <html>. */
 @custom-variant dark (&:where(.escuro, .escuro *));
 
-@font-face {
-  font-family: "Inter";
-  src: url("/fontes/Inter.ttf") format("truetype");
-  font-weight: 100 900;
-  font-display: swap;
-}
+/* Fonte Inter (licença SIL OFL, vem no pacote @fontsource-variable/inter): vai DENTRO do
+   programa, não depende de internet. Importada no main.tsx. */
 
 html, body, #root { height: 100%; }
 body {

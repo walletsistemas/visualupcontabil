@@ -16,6 +16,7 @@ import { Lista } from "@/telas/Lista";
 import { Painel } from "@/telas/Painel";
 import { Pecas } from "@/telas/Pecas";
 import { Tabela } from "@/telas/Tabela";
+import "@fontsource-variable/inter";
 import "./index.css";
 
 aplicarTema(temaSalvo());
