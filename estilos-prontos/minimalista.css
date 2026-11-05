@@ -1,0 +1,102 @@
+/*
+  ESTILO MINIMALISTA — preto e branco. SEM sombras e SEM vidro: as bordas fazem o trabalho.
+  Cantos pequenos, um único acento (preto no claro, branco no escuro). Bom para quem quer
+  "limpo e sério" ou para PCs fracos. Para usar: cole no lugar dos blocos :root e .escuro de
+  `src/tema/tokens.css`. Combine com: movimento.ts mais curto (molas com damping 50+).
+*/
+:root {
+  --fundo: #fafafa;
+  --superficie: #ffffff;
+  --vidro: #ffffff;
+  --campo: rgb(0 0 0 / 0.04);
+  --borda: rgb(0 0 0 / 0.12);
+  --zebra: rgb(0 0 0 / 0.025);
+
+  --texto: #0a0a0a;
+  --texto-2: #525252;
+  --texto-3: #737373;
+
+  --primario: #0a0a0a;
+  --primario-texto: #ffffff;
+  --acento: #0a0a0a;
+  --acento-texto: #0a0a0a;
+  --sobre-acento: #ffffff;       /* texto/ícone POR CIMA do acento */
+  --perigo: #dc2626;
+  --alerta: #b45309;
+
+  --menu: #ffffff;
+  --tinta: #0a0a0a;
+  --marca: #0a0a0a;
+  --menu-ativo: rgb(0 0 0 / 0.06);   /* pílula do item ativo */
+  --menu-ativo-sombra: none;
+  --menu-brilho-1: transparent;
+  --menu-brilho-2: transparent;
+  --cena-1: #ffffff;
+  --cena-2: #fafafa;
+  --cena-3: #f0f0f0;
+
+  --g-1: #171717;
+  --g-2: #737373;
+  --g-3: #dc2626;
+  --g-4: #e5e5e5;
+  --g-5: #404040;
+  --g-6: #a3a3a3;
+  --g-7: #525252;
+
+  --raio-p: 4px;
+  --raio-m: 6px;
+  --raio-g: 8px;
+  --raio-cartao: 10px;
+  --raio-janela: 12px;
+
+  --sombra-p: none;
+  --sombra-cartao: none;
+  --sombra-cartao-hover: 0 0 0 1px rgb(0 0 0 / 0.5);
+  --sombra-pop: 0 0 0 1px rgb(0 0 0 / 0.12), 0 8px 16px -8px rgb(0 0 0 / 0.12);
+  --sombra-janela: 0 0 0 1px rgb(0 0 0 / 0.12), 0 16px 32px -16px rgb(0 0 0 / 0.2);
+  --desfoque: 0px;
+
+  --fonte: "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+}
+
+.escuro {
+  --fundo: #0a0a0a;
+  --superficie: #141414;
+  --vidro: #141414;
+  --campo: rgb(255 255 255 / 0.06);
+  --borda: rgb(255 255 255 / 0.14);
+  --zebra: rgb(255 255 255 / 0.03);
+
+  --texto: #fafafa;
+  --texto-2: #a3a3a3;
+  --texto-3: #8a8a8a;
+
+  --primario: #fafafa;
+  --primario-texto: #0a0a0a;
+  --acento: #fafafa;
+  --acento-texto: #fafafa;
+  --sobre-acento: #0a0a0a;
+  --perigo: #f87171;
+  --alerta: #fbbf24;
+
+  --menu: #0a0a0a;
+  --tinta: #fafafa;
+  --menu-ativo: rgb(255 255 255 / 0.09);
+  --menu-ativo-sombra: none;
+  --marca: #fafafa;
+  --cena-1: #1a1a1a;
+  --cena-2: #0f0f0f;
+  --cena-3: #050505;
+
+  --g-1: #fafafa;
+  --g-2: #8a8a8a;
+  --g-3: #f87171;
+  --g-4: #262626;
+  --g-5: #d4d4d4;
+  --g-6: #525252;
+  --g-7: #a3a3a3;
+
+  --sombra-cartao-hover: 0 0 0 1px rgb(255 255 255 / 0.5);
+  --sombra-pop: 0 0 0 1px rgb(255 255 255 / 0.14);
+  --sombra-janela: 0 0 0 1px rgb(255 255 255 / 0.14), 0 16px 32px -16px rgb(0 0 0 / 0.8);
+}

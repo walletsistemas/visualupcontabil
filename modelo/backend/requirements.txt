@@ -1,0 +1,9 @@
+# A casca (o motor antigo acrescenta as dele, como já tinha)
+fastapi==0.143.3
+uvicorn==0.54.0
+pydantic==2.14.1
+pywebview==6.2.1
+# Empacotar e testar
+pyinstaller==6.21.0
+pytest==9.0.1
+httpx==0.28.1

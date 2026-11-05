@@ -1,0 +1,105 @@
+/*
+  ESTILO MODERNO — vibrante. Branco frio, índigo, menu lateral ESCURO mesmo no tema claro,
+  cantos bem arredondados, sombras com cor, vidro forte. Bom para produto novo, público jovem,
+  quem quer "cara de app". Para usar: cole no lugar dos blocos :root e .escuro de
+  `src/tema/tokens.css`.
+*/
+:root {
+  --fundo: #f5f6fb;
+  --superficie: #ffffff;
+  --vidro: rgb(255 255 255 / 0.66);
+  --campo: rgb(79 70 229 / 0.06);
+  --borda: rgb(30 27 75 / 0.09);
+  --zebra: rgb(79 70 229 / 0.04);
+
+  --texto: #17153b;
+  --texto-2: #4d4a72;
+  --texto-3: #6e6b91;
+
+  --primario: #4f46e5;
+  --primario-texto: #ffffff;
+  --acento: #4f46e5;
+  --acento-texto: #4338ca;
+  --sobre-acento: #ffffff;       /* texto/ícone POR CIMA do acento */
+  --perigo: #e11d48;
+  --alerta: #d97706;
+
+  /* menu escuro no tema claro: o contraste vira identidade */
+  --menu: #17153b;
+  --tinta: #ffffff;
+  --marca: #a5b4fc;
+  --menu-ativo: rgb(255 255 255 / 0.12);   /* pílula do item ativo */
+  --menu-ativo-sombra: inset 0 1px 0 rgb(255 255 255 / 0.12), 0 8px 20px -10px rgb(0 0 0 / 0.5);
+  --menu-brilho-1: rgb(129 140 248 / 0.22);
+  --menu-brilho-2: rgb(236 72 153 / 0.14);
+  --cena-1: #eef0ff;
+  --cena-2: #e3e6fb;
+  --cena-3: #d4d8f5;
+
+  --g-1: #10b981;
+  --g-2: #f59e0b;
+  --g-3: #f43f5e;
+  --g-4: #dfe1f3;
+  --g-5: #6366f1;
+  --g-6: #d946ef;
+  --g-7: #06b6d4;
+
+  --raio-p: 10px;
+  --raio-m: 14px;
+  --raio-g: 18px;
+  --raio-cartao: 24px;
+  --raio-janela: 28px;
+
+  --sombra-p: 0 1px 3px rgb(79 70 229 / 0.18);
+  --sombra-cartao: 0 2px 6px -2px rgb(30 27 75 / 0.08);
+  --sombra-cartao-hover: 0 20px 40px -16px rgb(79 70 229 / 0.35);
+  --sombra-pop: 0 24px 56px -16px rgb(30 27 75 / 0.35);
+  --sombra-janela: 0 36px 90px -24px rgb(30 27 75 / 0.5);
+  --desfoque: 28px;
+
+  --fonte: "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+}
+
+.escuro {
+  --fundo: #0d0c22;
+  --superficie: #17153b;
+  --vidro: rgb(23 21 59 / 0.66);
+  --campo: rgb(165 180 252 / 0.08);
+  --borda: rgb(165 180 252 / 0.12);
+  --zebra: rgb(165 180 252 / 0.04);
+
+  --texto: #eef0ff;
+  --texto-2: #b9bce6;
+  --texto-3: #8f92c2;
+
+  --primario: #818cf8;
+  --primario-texto: #0d0c22;
+  --acento: #6366f1;
+  --acento-texto: #a5b4fc;
+  --sobre-acento: #ffffff;
+  --perigo: #fb7185;
+  --alerta: #fbbf24;
+
+  --menu: #0a0920;
+  --tinta: #ffffff;
+  --marca: #a5b4fc;
+  --menu-ativo: rgb(255 255 255 / 0.1);
+  --menu-ativo-sombra: inset 0 1px 0 rgb(255 255 255 / 0.1), 0 8px 20px -10px rgb(0 0 0 / 0.6);
+  --menu-brilho-1: rgb(129 140 248 / 0.16);
+  --menu-brilho-2: rgb(236 72 153 / 0.1);
+  --cena-1: #2a2668;
+  --cena-2: #17153b;
+  --cena-3: #0a0920;
+
+  --g-1: #34d399;
+  --g-2: #fbbf24;
+  --g-3: #fb7185;
+  --g-4: #2e2b5e;
+  --g-5: #818cf8;
+  --g-6: #e879f9;
+  --g-7: #22d3ee;
+
+  --sombra-cartao-hover: 0 20px 40px -16px rgb(0 0 0 / 0.6);
+  --sombra-pop: 0 24px 56px -16px rgb(0 0 0 / 0.65);
+  --sombra-janela: 0 36px 90px -24px rgb(0 0 0 / 0.75);
+}

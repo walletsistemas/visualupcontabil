@@ -1,0 +1,55 @@
+@import "tailwindcss";
+@import "./tema/tokens.css";
+
+/* Tema escuro: liga com a classe .escuro no <html>. */
+@custom-variant dark (&:where(.escuro, .escuro *));
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fontes/Inter.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "cv11", "ss01";
+  user-select: none;   /* programa de desktop: só campos selecionam texto */
+  overflow: hidden;
+}
+input, textarea { user-select: text; }
+:focus-visible { outline: none; }  /* o foco é o anel do próprio componente (ring-acento) */
+
+/* Barra de rolagem discreta: fina, sem trilho; só aparece enquanto rola (lib/rolagem.ts). */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: transparent; }
+::-webkit-scrollbar-button { display: none; }
+::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+[data-rolando]::-webkit-scrollbar-thumb { background-color: color-mix(in srgb, var(--texto-3) 45%, transparent); }
+::-webkit-scrollbar-thumb:hover { background-color: color-mix(in srgb, var(--texto-3) 75%, transparent); }
+
+/* «Reduzir desfoque» (preferência do usuário ou PC fraco): nada embaçado atrás das janelas */
+html.sem-desfoque *, html.sem-desfoque *::before, html.sem-desfoque *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* barra «indo e vindo» (carregando sem saber quanto falta) */
+@keyframes deslizar {
+  0% { transform: translateX(-110%); }
+  100% { transform: translateX(310%); }
+}
+
+/* peças nativas (setinhas de número, calendário do navegador) acompanham o tema */
+:root { color-scheme: light; }
+:root.escuro { color-scheme: dark; }
