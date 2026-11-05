@@ -79,7 +79,7 @@ export function SeletorData({
   vazio?: string;
   /** travado: o balão que explica por quê, ao clicar */
   motivo?: string;
-  /** botão próprio no lugar do campo com rótulo (ex.: a etapa da rotina) */
+  /** botão próprio no lugar do campo com rótulo (ex.: um ícone de calendário numa linha) */
   gatilho?: React.ReactNode;
 }) {
   const [aberto, setAberto] = useState(false);

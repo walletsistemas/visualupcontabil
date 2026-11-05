@@ -112,7 +112,7 @@ export function Gaveta({ aberto, aoFechar, titulo, cabecalho, rodape, children, 
   /** ações fixas embaixo */
   rodape?: React.ReactNode;
   children: React.ReactNode;
-  /** cor do véu no topo (identidade do item aberto) */
+  /** cor do véu no topo (identidade do item aberto): hex ou var(--g-1) */
   cor?: string;
 }) {
   return (
@@ -125,7 +125,7 @@ export function Gaveta({ aberto, aoFechar, titulo, cabecalho, rodape, children, 
         >
           <div
             className="relative border-b border-borda px-6 pb-5 pt-6"
-            style={cor ? { background: `linear-gradient(180deg, ${cor}22 0%, transparent 100%)` } : undefined}
+            style={cor ? { background: `linear-gradient(180deg, color-mix(in srgb, ${cor} 13%, transparent) 0%, transparent 100%)` } : undefined}
           >
             {cabecalho}
             <Drawer.Title className={cn("text-[18px] font-semibold leading-snug tracking-tight", cabecalho && "sr-only")}>{titulo}</Drawer.Title>

@@ -323,7 +323,7 @@ export function MenuLateral({ usuario, tela, tema, aoIr, aoTrocarTema, aoSair }:
 export function Marca({ className, tamanho = 34 }: { className?: string; tamanho?: number }) {
   return (
     <span
-      className={cn("flex shrink-0 items-center justify-center rounded-[10px] bg-tinta text-menu shadow-sm", className)}
+      className={cn("flex shrink-0 items-center justify-center rounded-xl bg-tinta text-menu shadow-sm", className)}
       style={{ width: tamanho, height: tamanho }}
     >
       <Layers style={{ width: tamanho * 0.55, height: tamanho * 0.55 }} strokeWidth={2} />
@@ -360,9 +360,9 @@ function DicaMenu({ texto, ativa, children }: { texto: string; ativa: boolean; c
     <Tooltip.Root>
       <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
       <Tooltip.Portal>
-        <Tooltip.Content side="right" sideOffset={12} className="z-50 rounded-lg bg-[#1b1a18] px-2.5 py-1.5 text-[12.5px] font-medium text-white shadow-lg">
+        <Tooltip.Content side="right" sideOffset={12} className="z-50 rounded-lg bg-texto px-2.5 py-1.5 text-[12.5px] font-medium text-superficie shadow-pop">
           {texto}
-          <Tooltip.Arrow className="fill-[#1b1a18]" />
+          <Tooltip.Arrow className="fill-texto" />
         </Tooltip.Content>
       </Tooltip.Portal>
     </Tooltip.Root>

@@ -62,7 +62,7 @@ export function Entrada({ aoEntrar }: { aoEntrar: () => void }) {
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 pb-10">
         {/* marca */}
         <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: SUAVE }} className="mb-7 flex flex-col items-center text-tinta">
-          <Marca tamanho={54} className="rounded-[16px]" />
+          <Marca tamanho={54} className="rounded-2xl" />
           <span className="mt-3 text-[13px] font-medium uppercase tracking-[0.3em] text-tinta/70">Meu Sistema</span>
         </motion.div>
 
@@ -76,7 +76,7 @@ export function Entrada({ aoEntrar }: { aoEntrar: () => void }) {
             animate={tremer}
             onSubmit={entrar}
             className={cn(
-              "rounded-[28px] border border-white/40 bg-vidro px-8 pb-7 pt-16 backdrop-blur-vidro backdrop-saturate-150",
+              "rounded-[calc(var(--raio-janela)+4px)] border border-white/40 bg-vidro px-8 pb-7 pt-16 backdrop-blur-vidro backdrop-saturate-150",
               "shadow-[0_40px_100px_-30px_rgba(60,45,30,0.35)] dark:border-white/10 dark:shadow-[0_40px_100px_-30px_rgba(0,0,0,0.7)]",
             )}
           >

@@ -1,4 +1,5 @@
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
+import { useId } from "react";
 import { motion } from "motion/react";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -17,7 +18,7 @@ export function CaixaSelecao({ rotulo, marcado, aoMudar, className }: {
         checked={marcado}
         onCheckedChange={(v) => aoMudar(v === true)}
         className={cn(
-          "flex size-[18px] items-center justify-center rounded-[6px] border border-borda bg-superficie transition-all",
+          "flex size-[18px] items-center justify-center rounded-[calc(var(--raio-p)-2px)] border border-borda bg-superficie transition-all",
           "data-[state=checked]:border-acento data-[state=checked]:bg-acento focus-visible:ring-4 focus-visible:ring-acento/20",
         )}
       >
@@ -58,7 +59,7 @@ export function Segmentado<T extends string>({ valor, opcoes, aoMudar }: {
   opcoes: [T, React.ReactNode][];
   aoMudar: (v: T) => void;
 }) {
-  const grupo = opcoes.map((o) => o[0]).join();
+  const grupo = useId(); // cada Segmentado tem a sua pílula (dois iguais na tela não se misturam)
   return (
     <div className="flex h-9 items-center rounded-xl bg-campo p-0.5">
       {opcoes.map(([v, rot]) => (
@@ -67,12 +68,12 @@ export function Segmentado<T extends string>({ valor, opcoes, aoMudar }: {
           type="button"
           onClick={() => aoMudar(v)}
           className={cn(
-            "relative flex h-8 items-center justify-center rounded-[10px] px-3 text-[13px] font-medium transition-colors",
+            "relative flex h-8 items-center justify-center rounded-[calc(var(--raio-m)-2px)] px-3 text-[13px] font-medium transition-colors",
             valor === v ? "text-texto" : "text-texto-3 hover:text-texto-2",
           )}
         >
           {valor === v && (
-            <motion.span layoutId={`seg-${grupo}`} className="absolute inset-0 rounded-[10px] bg-superficie shadow-sm" transition={MOLA_RAPIDA} />
+            <motion.span layoutId={`seg-${grupo}`} className="absolute inset-0 rounded-[calc(var(--raio-m)-2px)] bg-superficie shadow-sm" transition={MOLA_RAPIDA} />
           )}
           <span className="relative">{rot}</span>
         </button>

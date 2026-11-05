@@ -116,9 +116,9 @@ export function Dica({ texto, lado = "top", children }: { texto: string; lado?: 
     <Tooltip.Root>
       <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
       <Tooltip.Portal>
-        <Tooltip.Content side={lado} sideOffset={8} className="z-50 rounded-lg bg-[#1b1a18] px-2.5 py-1.5 text-[12.5px] font-medium text-white shadow-lg">
+        <Tooltip.Content side={lado} sideOffset={8} className="z-50 rounded-lg bg-texto px-2.5 py-1.5 text-[12.5px] font-medium text-superficie shadow-pop">
           {texto}
-          <Tooltip.Arrow className="fill-[#1b1a18]" />
+          <Tooltip.Arrow className="fill-texto" />
         </Tooltip.Content>
       </Tooltip.Portal>
     </Tooltip.Root>
@@ -142,7 +142,7 @@ export function MenuSuspenso({ gatilho, children, alinhar = "end" }: { gatilho: 
 export function ItemMenu({ icone: Icone, texto, perigo, aoClicar }: { icone: LucideIcon; texto: string; perigo?: boolean; aoClicar: () => void }) {
   return (
     <Popover.Close asChild>
-      <button onClick={aoClicar} className={cn("flex h-9 w-full items-center gap-2.5 rounded-xl px-3 text-left text-[13.5px] transition hover:bg-campo", perigo && "text-perigo")}>
+      <button type="button" onClick={aoClicar} className={cn("flex h-9 w-full items-center gap-2.5 rounded-xl px-3 text-left text-[13.5px] transition hover:bg-campo", perigo && "text-perigo")}>
         <Icone className={cn("size-4 shrink-0", perigo ? "text-perigo" : "text-texto-2")} />
         {texto}
       </button>

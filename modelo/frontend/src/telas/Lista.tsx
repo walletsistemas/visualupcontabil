@@ -56,7 +56,11 @@ export function Lista({ aoNovo }: { aoNovo: () => void }) {
         {q.isLoading ? (
           <Esqueleto />
         ) : itens.length === 0 ? (
-          <Vazio icone={SearchX} titulo={`Nada encontrado para «${busca}»`} texto="Confira a escrita, ou limpe a busca para ver todos." acao={{ texto: "Limpar busca", aoClicar: () => setBusca("") }} />
+          busca ? (
+            <Vazio icone={SearchX} titulo={`Nada encontrado para «${busca}»`} texto="Confira a escrita, ou limpe a busca para ver todos." acao={{ texto: "Limpar busca", aoClicar: () => setBusca("") }} />
+          ) : (
+            <Vazio icone={SearchX} titulo="Nada em aberto" texto="Todos os itens estão concluídos." acao={{ texto: "Ver todos", aoClicar: () => setFiltro("todos") }} />
+          )
         ) : modo === "cartoes" ? (
           <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] items-start gap-3.5">
             {itens.map((i, n) => <Cartao key={i.id} i={i} n={n} aoAbrir={() => setAberto(i)} />)}

@@ -110,7 +110,7 @@ export function CampoBusca({ valor, aoMudar, placeholder = "Buscar…", classNam
         className="h-9 w-full rounded-xl border border-transparent bg-campo pl-9 pr-8 text-[13.5px] outline-none transition placeholder:text-texto-3 focus:border-acento/40 focus:bg-superficie focus:ring-4 focus:ring-acento/10"
       />
       {valor && (
-        <button aria-label="Limpar busca" onClick={() => aoMudar("")} className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-texto-3 hover:text-texto">
+        <button type="button" aria-label="Limpar busca" onClick={() => aoMudar("")} className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-texto-3 hover:text-texto">
           <X className="size-3.5" />
         </button>
       )}

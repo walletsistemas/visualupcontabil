@@ -10,11 +10,11 @@ export function GradeMeses({ valor, aoEscolher }: { valor: string; aoEscolher: (
   return (
     <div className="w-[264px]">
       <div className="mb-2 flex items-center justify-between">
-        <button aria-label="Ano anterior" onClick={() => setAno((a) => a - 1)} className="rounded-lg p-1.5 text-texto-2 hover:bg-campo">
+        <button type="button" aria-label="Ano anterior" onClick={() => setAno((a) => a - 1)} className="rounded-lg p-1.5 text-texto-2 hover:bg-campo">
           <ChevronLeft className="size-4" />
         </button>
         <span className="text-[14px] font-semibold">{ano}</span>
-        <button aria-label="Próximo ano" onClick={() => setAno((a) => a + 1)} className="rounded-lg p-1.5 text-texto-2 hover:bg-campo">
+        <button type="button" aria-label="Próximo ano" onClick={() => setAno((a) => a + 1)} className="rounded-lg p-1.5 text-texto-2 hover:bg-campo">
           <ChevronRight className="size-4" />
         </button>
       </div>
@@ -24,6 +24,7 @@ export function GradeMeses({ valor, aoEscolher }: { valor: string; aoEscolher: (
           const sel = c === valor;
           return (
             <button
+              type="button"
               key={m}
               onClick={() => aoEscolher(c)}
               className={cn("h-9 rounded-lg text-[13px] capitalize transition", sel ? "bg-acento font-semibold text-sobre-acento" : "text-texto hover:bg-campo")}
@@ -48,6 +49,7 @@ export function SeletorMes({ valor, atual, aoMudar }: { valor: string; atual: st
     <Popover.Root open={aberto} onOpenChange={setAberto}>
       <Popover.Trigger asChild>
         <button
+          type="button"
           title={agora ? "Mês atual" : `Fora do mês atual (${mesPorExtenso(atual)})`}
           className={cn(
             "flex h-9 items-center gap-2 rounded-xl border px-3 text-[13px] font-semibold transition",
@@ -71,6 +73,7 @@ export function SeletorMes({ valor, atual, aoMudar }: { valor: string; atual: st
           />
           {!agora && (
             <button
+              type="button"
               onClick={() => {
                 aoMudar(atual);
                 setAberto(false);

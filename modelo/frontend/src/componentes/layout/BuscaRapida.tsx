@@ -75,7 +75,7 @@ export function BuscaRapida({ aoIr, aoTrocarTema, aoSair }: { aoIr: (chave: stri
             exit={{ opacity: 0, scale: 0.98, y: -4 }}
             transition={MOLA_RAPIDA}
             onMouseDown={(e) => e.stopPropagation()}
-            className="w-full max-w-[600px] overflow-hidden rounded-[20px] border border-borda bg-vidro shadow-janela backdrop-blur-vidro"
+            className="w-full max-w-[600px] overflow-hidden rounded-cartao border border-borda bg-vidro shadow-janela backdrop-blur-vidro"
           >
             <Command label="Busca rápida" loop filter={filtrar}>
               <div className="flex items-center gap-3 border-b border-borda px-5">

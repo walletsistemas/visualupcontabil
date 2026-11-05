@@ -102,7 +102,7 @@ export function Lista<T extends string | number>({
                   <span
                     className={cn(
                       "flex size-4 shrink-0 items-center justify-center",
-                      multipla && "rounded-[5px] border",
+                      multipla && "rounded-[calc(var(--raio-p)-3px)] border",
                       multipla && (sim ? "border-acento bg-acento text-sobre-acento" : "border-borda"),
                       !multipla && "text-acento",
                     )}

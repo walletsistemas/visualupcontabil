@@ -13,11 +13,6 @@ export const MODO_NAVEGADOR = parametros.get("m") === "navegador";
 /** Aberto pelo `app.py` (janela ou navegador), e não direto pelo Vite. */
 export const ABERTO_PELO_SISTEMA = parametros.has("t");
 
-/** Endereço completo de um arquivo do Python (para <img src>, que não manda cabeçalho). */
-export function enderecoArquivo(caminho: string) {
-  return `${API}${caminho}${caminho.includes("?") ? "&" : "?"}t=${encodeURIComponent(TOKEN)}`;
-}
-
 export class ErroDaApi extends Error {}
 
 async function chamar<T>(metodo: string, caminho: string, corpo?: unknown): Promise<T> {
