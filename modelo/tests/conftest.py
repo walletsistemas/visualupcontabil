@@ -6,4 +6,6 @@ import tempfile
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path[:0] = [os.path.join(RAIZ, "backend"), os.path.join(RAIZ, "backend", "motor")]
-os.environ["MEU_SISTEMA_DADOS"] = tempfile.mkdtemp(prefix="meusistema_teste_")
+import app  # noqa: E402  (depois do sys.path)
+
+os.environ[app.VAR_DADOS] = tempfile.mkdtemp(prefix="teste_")

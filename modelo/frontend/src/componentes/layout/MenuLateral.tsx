@@ -35,7 +35,7 @@ const FECHADO = 72;
 /**
  * MENU LATERAL — o mesmo do Plus (frontend/src/componentes/layout/MenuLateral.tsx), sem as
  * janelas e contadores que dependem dos módulos de lá (Novidades, Sugestões, Seu dia, e-mail).
- * - Marca no topo; busca (Ctrl+K); seções com título em caixa alta que DOBRAM com um clique
+ * - Logo da UP + NOME_SISTEMA no topo; busca (Ctrl+K); seções com título em caixa alta que DOBRAM com um clique
  *   (e o menu lembra quais ficaram dobradas).
  * - Item ativo: pílula clara que DESLIZA de um item ao outro (layoutId) + barrinha da marca à esquerda.
  * - Recolhido (só ícones, 72 px): passar o mouse mostra o nome num balão. Ctrl+B recolhe/abre.

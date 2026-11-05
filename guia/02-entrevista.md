@@ -1,128 +1,103 @@
 # 02 · A entrevista
 
-> **Para a IA.** Antes de desenhar qualquer tela, pergunte. O kit dá a *forma*; o usuário dá
-> a *identidade*. Faça as perguntas em **blocos de 3–4**, cada uma com opções, a sua
-> recomendação (marcada) e, quando houver, a imagem. Se a sua ferramenta tem perguntas de
-> múltipla escolha (ex.: AskUserQuestion), use-as. Respostas vão para `docs/visual.md`.
+> **Para a IA.** A aparência já está decidida: é a do Sistema Contábil Plus. A entrevista serve
+> para o que é **deste sistema**: nome, módulos, telas, comportamento e as poucas diferenças
+> permitidas ([01-o-padrao.md](01-o-padrao.md)). Pergunte em **blocos de 3–4**, sempre com a sua
+> recomendação; se a sua ferramenta tem perguntas de múltipla escolha (ex.: AskUserQuestion),
+> use-as. Não pergunte o que dá para descobrir no código. "Decide você" = use a recomendação.
+> As respostas vão para `docs/visual.md` do projeto.
 >
-> Regras: não pergunte o que dá para descobrir no código; não pergunte tudo de uma vez;
-> se o usuário disser "decide você", use a recomendação e siga.
+> Antes de começar, mostre ao usuário 2 ou 3 fotos do padrão para ele saber como vai ficar:
+> [entrada](../imagens/claro/entrada.png), [painel](../imagens/claro/painel.png),
+> [cadastro](../imagens/claro/cadastro-cartoes.png), [ficha](../imagens/escuro/ficha-lateral.png).
 
 ---
 
 ## Bloco 1 · Identidade
 
-**1. Qual é o nome que aparece na janela e no menu?** E quem publica (nome da empresa ou
-pessoa, vai no instalador)?
-Ex.: o nome atual do programa. Também: tem logo? Em que formato (PNG/SVG)? Tem versão clara e
-escura? *(Sem logo: o kit usa um quadrado com ícone, `Marca` em `MenuLateral.tsx`.)*
+**1. Nome do sistema** (aparece embaixo do logo da UP no menu e na entrada, na janela e no
+instalador). *Recomendado: o nome atual do sistema.* O logo é sempre o da UP.
 
-**2. Qual estilo geral?** Mostre as 4 fotos de cada um (painel e cadastro, claro e escuro):
+**2. Nome da pasta e da variável de teste.** Proponha a partir do nome, sem acento nem espaço
+(ex.: "Folha Fácil" → pasta `FolhaFacil`, variável `FOLHA_FACIL_DADOS`). Só confirme.
 
-| Estilo | Cara | Bom para | Fotos |
-|---|---|---|---|
-| **Original** *(recomendado)* | Quente, areia + grafite + verde, vidro, sombras suaves, cantos generosos | Uso diário longo, equipe pequena, "cara de Apple" | [claro](../imagens/estilos/original-claro-painel.png) · [escuro](../imagens/estilos/original-escuro-painel.png) |
-| **Sóbrio** | Cinza frio + azul-marinho, cantos menores, sem vidro | Corporativo, financeiro, jurídico, telas densas | [claro](../imagens/estilos/sobrio-claro-painel.png) · [escuro](../imagens/estilos/sobrio-escuro-painel.png) |
-| **Moderno** | Índigo vibrante, menu escuro, muito arredondado, sombras com cor | Produto novo, público jovem, "cara de app" | [claro](../imagens/estilos/moderno-claro-painel.png) · [escuro](../imagens/estilos/moderno-escuro-painel.png) |
-| **Minimalista** | Preto e branco, sem sombra nem vidro, bordas finas | "Limpo e sério", PCs fracos | [claro](../imagens/estilos/minimalista-claro-painel.png) · [escuro](../imagens/estilos/minimalista-escuro-painel.png) |
+**3. Onde fica a base de teste (fictícia)?** Proponha uma cópia dos dados em
+`%USERPROFILE%\Desktop\<BASE> FICTICIA` (como o `BANCO FICTICIO` do Plus). Nunca a oficial.
 
-Pode misturar: "o Sóbrio, mas com o verde do Original".
-
-**3. Tem cores da marca?** Peça os códigos (ou o logo para extrair). A cor principal vira o
-`--acento`; confira contraste do texto branco em cima (se ficar ruim, use o tom mais escuro e
-ajuste `--sobre-acento`). Avise se a cor da marca é vermelha/laranja: ela compete com
-`--perigo`/`--alerta`, então escolha outra para "erro".
-
-**4. Tema escuro?**
-- Claro e escuro, a pessoa escolhe no menu da conta *(recomendado; sem login, o mesmo menu
-  vira "Preferências" no rodapé do menu lateral)*
-- Só claro · Só escuro · Segue o Windows
+**4. A paleta do Plus serve, ou o sistema precisa de um tom próprio para ser reconhecido?**
+- Igual ao Plus *(recomendado)*
+- Ajuste pequeno: outro tom de verde no destaque (mostre 2 ou 3 tons próximos). Só os valores
+  dos tokens mudam, nos dois temas; os nomes ficam. Fora disso, explique que não pode
+  ([01](01-o-padrao.md#não-pode-mesmo-que-o-usuário-peça-só-um-pouquinho)).
 
 ---
 
-## Bloco 2 · Forma e movimento
+## Bloco 2 · Organização
 
-**5. Sombras?**
-- Suaves, só para separar camadas *(recomendado; Original)*
-- Quase nenhuma (Sóbrio) · Nenhuma, só bordas (Minimalista) · Marcadas e coloridas (Moderno)
-
-**6. Vidro (fundo translúcido e desfocado na busca, na entrada e atrás das janelas)?**
-- Sim, com a opção "Reduzir desfoque" no menu da conta *(recomendado)*
-- Não (`--desfoque: 0px`; bom para PC fraco)
-
-**7. Cantos?**
-- Generosos: 12 px nos botões, 20 px nos cartões *(recomendado)*
-- Discretos: 8/12 px (Sóbrio) · Retos: 6/10 px (Minimalista) · Bem redondos: 14/24 px (Moderno)
-
-**8. Animações?** Mostre os GIFs de [../imagens/animacoes/](../imagens/animacoes/).
-- Completas, com mola (menu deslizando, janelas crescendo, cartões em cascata) *(recomendado)*
-- Discretas: continuam deslizando, mas mais curtas e sem balanço (receita "Discreto" em `movimento.ts`)
-- Mínimas: só aparecer/sumir (`reducedMotion="always"`)
-(O kit já respeita "reduzir animações" do Windows de qualquer jeito.)
-
-**9. Densidade?**
-- Confortável: campos de 40 px, linhas de lista de 44 px *(recomendado para cadastro)*
-- Compacta: campos de 36 px, linhas de 32 px *(recomendado para telas de muitos números)*
-Pode ser por tela.
-
----
-
-## Bloco 3 · Organização
-
-**10. Menu lateral.** Mostre o mapa de telas que você fez na Fase 1 e proponha as **seções**
-(títulos em caixa alta) e a ordem. Pergunte:
-- Os nomes das seções e das telas (proponha os atuais do programa).
-- Ícone de cada tela (proponha da biblioteca Lucide; mostre o nome do ícone).
-- Telas só para administrador? (a seção some para quem não pode).
-- Contadores na bolinha (ex.: pendências)?
-- Menu começa aberto, recolhido (só ícones) ou automático (abre ao passar o mouse)?
+**5. Módulos do menu.** Mostre o mapa de telas da Fase 1 e proponha:
+- as **seções** (títulos em caixa alta; o Plus usa "Gestão", "Operação", "Administração");
+- os **módulos** de cada seção, com nome, ícone (da biblioteca Lucide; diga o nome do ícone) e uma
+  frase de descrição (aparece na busca Ctrl+K);
+- quais seções são **só do administrador**;
+- quais módulos têm **contador** na bolinha (pendências).
+Lembre: módulo com nome igual a um do Plus (ex.: "Empresas") terá de ser juntado ao do Plus um
+dia — pergunte se é o mesmo assunto.
 
 ![menu](../imagens/claro/menu-conta.png)
 
-**11. Primeira tela depois de entrar?**
-- Um **painel** com números e gráficos do dia *(recomendado se houver o que medir)*
-- A tela mais usada direto
+**6. Primeira tela depois de entrar?**
+- Um **painel** com números e gráficos do mês, como a Visão geral do Plus *(recomendado se
+  houver o que medir)*
+- O módulo mais usado direto
 
-**12. Para cada tela de lista:** cartões, lista/tabela ou os dois (com alternador)?
-O que aparece no cartão (no máximo: nome, 1 linha de detalhe, 1 selo de situação, 2–4 dados,
-pessoas e um valor). Clicar abre **ficha lateral** (gaveta) ou **tela inteira**?
+**7. Para cada módulo que é lista:** cartões, lista, ou os dois com o alternador (como Empresas
+no Plus)? O que aparece no cartão (no máximo: nome, 1 linha de detalhe, 1 selo de situação, 2–4
+dados, pessoas e um valor)? Clicar abre a **ficha lateral** *(recomendado)* ou uma tela inteira?
 ![cartões](../imagens/claro/cadastro-cartoes.png)
 
-**13. Tela de entrada (login)?**
-- Com fundo animado e cartão de vidro *(recomendado)*
-- Simples, sem animação
-- Não tem login (abre direto na janela principal)
+**8. Tem login?**
+- Sim, igual ao Plus (foto/iniciais ao digitar, lembrar login, mudar senha) *(recomendado se o
+  sistema antigo tinha usuários)*
+- Não: abre direto na janela principal (o rodapé do menu vira "Preferências")
 
 ---
 
-## Bloco 4 · Comportamento
+## Bloco 3 · Comportamento
 
-**14. Busca rápida (Ctrl+K)?** O que ela deve achar: telas, ações ("novo X"), registros (quais)?
+**9. Busca rápida (Ctrl+K):** além das telas, que **ações** ("Novo X") e que **registros**
+(quais, por quais campos) ela deve achar?
 ![busca](../imagens/claro/busca-rapida.png)
 
-**15. Confirmações.** Quais ações pedem "tem certeza?" (sugestão: apagar, sobrescrever,
-enviar para outros). As demais avisam com balão de sucesso.
+**10. Confirmações:** quais ações pedem "tem certeza?" (sugestão: apagar, sobrescrever, enviar
+para outros). As demais avisam com balão de sucesso.
 
-**16. Textos.** Tratamento: "você" ou impessoal? Português do Brasil? Formato de data
-(dd/mm/aaaa) e de dinheiro (R$ 1.234,56)?
+**11. Atalhos de teclado** que a equipe já usa no sistema antigo (o Plus já tem Ctrl+K e Ctrl+B).
+Os antigos continuam funcionando.
 
-**17. Atalhos de teclado** que a equipe já usa no programa antigo (o kit já tem Ctrl+K e
-Ctrl+B). Os antigos devem continuar funcionando.
+**12. Peças que o Plus não tem:** alguma tela precisa de algo que não está em
+[08-componentes.md](08-componentes.md)? Se sim, será uma peça nova, com as classes do Plus, num
+arquivo próprio — e anotada em "Diferenças em relação ao Plus".
 
 ---
 
 ## Fechamento
 
-Mostre um resumo de uma tela com as respostas (estilo, cores, cantos, sombra, vidro, animação,
-seções do menu, primeira tela) e peça o "ok". Grave em `docs/visual.md` neste formato:
+Mostre o resumo e peça o "ok". Grave em `docs/visual.md` neste formato:
 
 ```md
-# Receita visual
-- Estilo base: Original · Acento: #1f6f5c · Escuro: sim (escolha no menu)
-- Sombras: suaves · Vidro: sim + "Reduzir desfoque" · Cantos: generosos · Animação: completa
-- Densidade: confortável (Tabela X: compacta)
-- Menu: Seção "Principal": Painel, Clientes, Pedidos · Seção "Admin" (só admin): Usuários
-- Primeira tela: Painel · Login: com fundo animado
-- Busca: telas, ações, clientes por nome/código
+# Receita visual — <Nome do Sistema>
+Padrão: Sistema Contábil Plus (kit visualupcontabil). Logo: UP.
+
+- Nome no menu/entrada: <NOME> · Pasta: <Pasta> · Variável de teste: <VAR_DADOS>
+- Base de teste: <caminho>
+- Menu:
+  - Gestão: Painel (LayoutDashboard), Clientes (Users, contador: pendências)
+  - Administração (só admin): Usuários (UserCog)
+- Primeira tela: Painel · Login: sim (igual ao Plus)
+- Listas: Clientes = cartões + lista, ficha lateral
+- Busca Ctrl+K: telas, "Novo cliente", clientes por nome/CNPJ
 - Confirmar antes de: apagar, enviar
+
+## Diferenças em relação ao Plus
+- (nenhuma) | ex.: --verde claro #2f7a6b / escuro #2e7a6b (tom do sistema); peça nova Linha do tempo (rotas/historico/LinhaDoTempo.tsx)
 ```

@@ -33,7 +33,7 @@ def test_imagem_com_senha_no_endereco():
 
 
 def test_pelo_codigo_so_abre_base_de_teste(monkeypatch):
-    monkeypatch.delenv("MEU_SISTEMA_DADOS", raising=False)
+    monkeypatch.delenv(app.VAR_DADOS, raising=False)
     assert app.base_oficial_sem_pedido()
-    monkeypatch.setenv("MEU_SISTEMA_DADOS", "C:/teste")
+    monkeypatch.setenv(app.VAR_DADOS, "C:/teste")
     assert not app.base_oficial_sem_pedido()

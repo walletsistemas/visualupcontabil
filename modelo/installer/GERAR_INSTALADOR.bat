@@ -17,6 +17,8 @@ if exist "%ProgramFiles%\Inno Setup 6\ISCC.exe" set "ISCC=%ProgramFiles%\Inno Se
 if exist "%LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe" set "ISCC=%LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe"
 if not defined ISCC (echo [ERRO] Inno Setup 6 nao encontrado: winget install JRSoftware.InnoSetup & goto parar)
 
+for /f "delims=" %%v in ('python -c "import sys; sys.path.insert(0,'backend'); import versao; print(versao.VERSAO)"') do set "VERSAO=%%v"
+echo   Versao: %VERSAO%  (de backend\versao.py)
 echo [1/5] Bibliotecas...
 python -m pip install -r backend\requirements.txt || goto parar
 pushd frontend
@@ -34,7 +36,7 @@ echo [4/5] Programa (.exe)...
 python -m PyInstaller MeuSistema.spec --noconfirm || goto parar
 
 echo [5/5] Instalador...
-"%ISCC%" installer\instalador.iss || goto parar
+"%ISCC%" /DMyAppVersion=%VERSAO% installer\instalador.iss || goto parar
 
 echo.
 echo   PRONTO: installer\Output\MeuSistema_Setup.exe

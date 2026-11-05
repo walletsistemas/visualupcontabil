@@ -1,9 +1,10 @@
-# Kit visual — casca de programa desktop moderno
+# Padrão visual UP Contábil — a casca do Sistema Contábil Plus
 
-Um **espelho visual** de um sistema desktop de produção: janela própria do Windows, menu
-lateral que recolhe, busca Ctrl+K, cartões, fichas laterais, tabelas, gráficos, janelas com
-mola, tema claro e escuro. Feito para você **apontar a sua IA para esta pasta** e ela fazer a
-"cirurgia" no seu programa: trocar a casca inteira e manter as suas regras.
+Este repositório é o **padrão obrigatório** para os sistemas internos do escritório. O
+**Sistema Contábil Plus** foi escolhido como base e modelo: todos os outros sistemas em andamento
+passam a usar a **mesma stack** e a **mesma casca** dele (tela de entrada, menu lateral, busca
+Ctrl+K, janelas, cores, peças, organização das pastas). O objetivo é que, no futuro, todos virem
+**uma coisa só**, dentro do Plus, com o mínimo de retrabalho.
 
 ![Painel](imagens/claro/painel.png)
 
@@ -14,61 +15,61 @@ mola, tema claro e escuro. Feito para você **apontar a sua IA para esta pasta**
 
 ![Menu lateral](imagens/animacoes/menu-lateral.gif)
 
-## Como usar (3 passos)
+## Como usar no seu sistema (3 passos)
 
-1. Clone esta pasta **ao lado** do seu projeto:
+1. Clone este repositório **ao lado** do seu projeto:
    ```bash
    git clone https://github.com/walletsistemas/visualupcontabil.git
    ```
-2. Abra a sua IA (Claude Code, Codex, etc.) **dentro do seu projeto**.
+2. Abra a IA (Claude Code, Codex...) **dentro do seu projeto**.
 3. Diga:
-   > Leia `..\visualupcontabil\guia\00-comece-aqui.md` e siga o roteiro para fazer a cirurgia
-   > visual do meu sistema. Me entreviste antes de mudar qualquer coisa.
+   > Leia `..\visualupcontabil\guia\00-comece-aqui.md` e siga o roteiro para fazer a cirurgia do
+   > meu sistema para o padrão do Sistema Contábil Plus. Me entreviste antes de mudar qualquer coisa.
 
-A IA vai: entender o seu projeto → entrevistar você (estilo, cores, sombras, cantos,
-animações, menu, nomes) → mostrar um plano → trocar tela por tela, conferindo que tudo continua
-dando o mesmo resultado.
+A IA vai: entender o seu sistema → entrevistar você (nome, módulos do menu, telas, o que é
+particular) → mostrar um plano → montar a versão nova numa pasta própria e passar módulo por
+módulo, conferindo que tudo continua dando o mesmo resultado. O sistema antigo fica intocado e
+continua sendo o oficial até a versão nova estar pronta.
 
-## Importante
+## O que é obrigatório e o que pode variar
 
-- **A cirurgia completa usa a mesma stack do kit**: Python (FastAPI + pywebview) por trás e
-  React + Tailwind nas telas. Se o seu programa é PyQt6/PySide6/Tkinter, a cirurgia **é** essa
-  troca, e as suas regras em Python são reaproveitadas. O sistema que originou o kit era PyQt6 e
-  trocou em **2 dias**. Ver [guia/01-postura.md](guia/01-postura.md).
-- Os nomes e textos das telas de exemplo ("Meu Sistema", "Cadastro", "Projeto Alfa") são só
-  exemplos com dados inventados. Os seus vêm da entrevista.
-- Só Windows 10/11 (a janela usa o WebView2, que já vem no sistema).
+| Igual ao Plus, sempre | Pode ser do seu sistema |
+|---|---|
+| Stack, organização das pastas, nomes de arquivos e peças | Módulos, seções e ícones do menu |
+| Tela de entrada, menu lateral, busca, janelas, ficha, balões | As telas de cada módulo, as regras e os textos |
+| Fonte, cantos, sombras, animações, logo da UP | O nome do sistema embaixo do logo |
+| Os arquivos que são cópia do Plus | Ajuste pequeno de paleta (outros tons, mesmos nomes) |
+| | Peças novas que o Plus não tem (com as classes do Plus) |
 
-## Ver o kit rodando
+Regra para qualquer dúvida: **vai dar trabalho quando o sistema for juntado ao Plus?** Se sim,
+não pode. Detalhes em [guia/01-o-padrao.md](guia/01-o-padrao.md).
+
+## Ver o padrão rodando
 
 Precisa de [Node.js](https://nodejs.org/) e [Python 3.12+](https://www.python.org/downloads/).
 
 ```bash
-modelo\ABRIR.bat vitrine
+modelo\scripts\ABRIR_NO_NAVEGADOR.bat telas
 ```
-As telas no navegador, em http://localhost:5173 (com dados inventados).
+As telas de exemplo no navegador, em http://localhost:5173.
 
 ```bash
-modelo\ABRIR.bat
+modelo\scripts\ABRIR_NA_JANELA.bat ficticia
 ```
-O programa completo, na janela própria.
+O programa completo, na janela própria, numa base de teste.
 
 ## O que tem aqui
 
 | Pasta | Conteúdo |
 |---|---|
-| [`guia/`](guia/00-comece-aqui.md) | O roteiro da cirurgia para a IA, a entrevista, a migração do PyQt, princípios, cores, componentes, telas, animações, instalador e a conferência final |
-| `modelo/` | Um sistema-esqueleto que **roda**: `backend/` (Python), `frontend/` (telas), `empacotar/` (`.exe` e instalador) |
-| `estilos-prontos/` | 4 visuais prontos: Original, Sóbrio, Moderno, Minimalista |
-| `imagens/` | Fotos de cada tela e peça (claro/escuro), dos estilos e GIFs das animações |
+| [`guia/`](guia/00-comece-aqui.md) | O roteiro da cirurgia para a IA, o padrão (obrigatório × pode variar), a entrevista, a migração do PyQt, princípios, cores, peças, telas, animações, instalador e a conferência final |
+| `modelo/` | O esqueleto que **roda**, no formato do Plus: `backend/`, `frontend/`, `scripts/`, `installer/`, `tests/`, `assets/` e um `CLAUDE.md` modelo para o projeto |
+| `imagens/` | Fotos de cada tela e peça (claro e escuro) e GIFs das animações |
 
-## Estilos prontos
+## Manutenção
 
-| Original | Sóbrio | Moderno | Minimalista |
-|---|---|---|---|
-| ![](imagens/estilos/original-claro-cadastro.png) | ![](imagens/estilos/sobrio-claro-cadastro.png) | ![](imagens/estilos/moderno-claro-cadastro.png) | ![](imagens/estilos/minimalista-claro-cadastro.png) |
+O Plus é a referência. Quando ele mudar algo da casca (um arquivo de `componentes/ui`, `lib`,
+`index.css`, menu, entrada...), atualize a cópia em `modelo/` e as fotos (`npm run fotos` em
+`modelo/frontend`). Veja [CLAUDE.md](CLAUDE.md).
 
-## Licenças
-
-Código do kit: livre para usar e adaptar. Bibliotecas: as licenças de cada uma (todas abertas;
-a fonte Inter é SIL OFL e vem no pacote `@fontsource-variable/inter`, com a licença dentro).
+Repositório interno da UP Contábil. Nunca coloque dados de clientes aqui.

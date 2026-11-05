@@ -1,6 +1,8 @@
 /*
   COPIADO DO SISTEMA CONTÁBIL PLUS (frontend/src/index.css) — é o PADRÃO do escritório.
-  Não mude cores, nomes nem medidas aqui: o que muda no Plus, muda aqui (e vice-versa).
+  NOMES e MEDIDAS não mudam. Ajuste pequeno de paleta é permitido só nos VALORES de --verde,
+  --verde-texto, --destaque, --menu e --menu-brilho-* (nos dois temas), registrado no
+  docs/visual.md do projeto (ver guia/01-o-padrao.md e guia/07-cores-e-medidas.md).
   Ficaram de fora só as regras de uma tela do Plus (barras da Escrituração, relatório em PDF).
 */
 @import "tailwindcss";

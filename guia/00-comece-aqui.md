@@ -1,112 +1,126 @@
 # 00 · Comece aqui (roteiro da cirurgia)
 
-> **Para a IA.** Você foi chamada dentro do projeto de alguém e apontada para esta pasta.
-> Leia este arquivo inteiro antes de mexer em qualquer coisa. Ele diz o que fazer, em que
-> ordem e o que nunca fazer.
+> **Para a IA.** Você foi chamada dentro de um sistema do escritório UP Contábil e apontada para
+> esta pasta. Leia este arquivo inteiro antes de mexer em qualquer coisa. Ele diz o que é
+> obrigatório, o que fazer, em que ordem e o que nunca fazer.
+
+## Por que este kit existe
+
+O **Sistema Contábil Plus** é o modelo de todos os sistemas do escritório. A ideia é que, no
+futuro, os sistemas que hoje estão separados virem **uma coisa só**, dentro do Plus. Para isso
+dar pouco trabalho, cada sistema em andamento passa por uma "cirurgia": ganha a **mesma stack**
+e a **mesma casca** do Plus (tela de entrada, menu lateral, busca, janelas, cores, peças,
+organização das pastas), mantendo as suas próprias regras e telas.
+
+Este kit é a casca do Plus separada para isso: `modelo/` é um sistema-esqueleto que roda e cujos
+arquivos são **cópias dos arquivos do Plus** (ou adaptações mínimas deles).
+
+## O que é obrigatório e o que pode variar
+
+Leia o detalhe em [01-o-padrao.md](01-o-padrao.md). Em resumo:
+
+| Igual ao Plus, sempre | Pode ser do sistema |
+|---|---|
+| Stack (Python + FastAPI + pywebview; React + Vite + Tailwind + Radix + Motion...) | Os **módulos** do menu, as seções e os ícones |
+| Organização das pastas (`backend/motor`, `servicos`, `api`, `esquemas`, `janela`; `frontend/src/rotas/<modulo>`, `componentes`, `lib`; `scripts`, `installer`, `tests`) | As **telas** de cada módulo e o que elas mostram |
+| Tela de entrada, menu lateral, busca Ctrl+K, janelas, ficha lateral, balões | As **regras** do sistema (o motor) e os textos |
+| Fonte, medidas, cantos, sombras, animações, logo da UP | O **nome** do sistema embaixo do logo |
+| Os arquivos que são cópia do Plus (não se editam) | **Ajustes pequenos de paleta** (mesmos nomes de cor, outros tons) |
+| Os nomes das cores (`verde`, `vermelho`, `destaque`...) e das peças | **Peças novas** quando o Plus não tem (com as classes do Plus, em arquivo próprio) |
+
+A regra para decidir uma dúvida: **isto vai dar trabalho quando este sistema for juntado ao
+Plus?** Se sim, não pode. Se não, pode, e fica registrado em `docs/visual.md` do projeto.
 
 ## O que é a "cirurgia"
 
-Trocar **a casca inteira** do programa da pessoa (telas, janela, menus, botões, cores,
-animações) pela casca deste kit, mantendo **as regras** do programa (cálculos, banco de dados,
-leitura de arquivos, validações) funcionando exatamente como antes.
+Trocar a casca inteira do sistema (telas, janela, menus, botões, cores, animações) pela casca do
+Plus, mantendo as regras (cálculos, banco, leitura de arquivos, validações) funcionando
+exatamente como antes. Não é um tema por cima do que existe nem uma reescrita do sistema.
 
-- **Não é** um tema por cima do que existe. É trocar a tecnologia das telas.
-- **Não é** reescrever o sistema. O motor fica; muda só o jeito de mostrar e de pedir.
-- **Não é** copiar nomes. Rótulos, nomes de telas, cores e organização vêm da **entrevista**
-  com o usuário ([02-entrevista.md](02-entrevista.md)). O que vem do kit é a *forma*: medidas,
-  hierarquia, comportamento, animação, padrão de botão, de lista, de janela.
-
-## Regra que vem antes de todas
-
-**Cirurgia completa = mesma stack deste kit.** Python + FastAPI + pywebview (janela) +
-React/Vite/Tailwind/Radix/Motion (telas). Está tudo em [03-stack.md](03-stack.md).
-Se o projeto da pessoa é PyQt6/PySide6/Tkinter/WinForms, a cirurgia **é** a troca para essa
-stack. Não ofereça "um tema no Qt", não proponha Electron/Tauri/outra biblioteca de telas e
-não diga que é trabalho demais. Leia [01-postura.md](01-postura.md): um sistema PyQt6 grande
-fez essa troca em **2 dias**.
+Se o sistema é PyQt6/PySide6/Tkinter/WinForms, a cirurgia **é** a troca para a stack do Plus.
+Não ofereça "um tema no Qt", não proponha Electron/Tauri/outra biblioteca de telas e não diga que
+é trabalho demais: o próprio Plus fez essa troca, saindo do PyQt6, em **2 dias**
+([01-o-padrao.md](01-o-padrao.md#postura-sem-criar-dificuldades)).
 
 ## O roteiro (siga nesta ordem)
 
 ### Fase 1 · Entender o projeto (sem mudar nada)
-1. Rode `git status` e `git log -5`. Se não for repositório git, sugira `git init` e um commit
-   inicial **antes** de tudo (é a rede de segurança da cirurgia).
-2. Descubra a tecnologia atual: procure `PyQt6`, `PySide6`, `qtpy`, `tkinter`, `.ui`,
-   `QMainWindow`, `QWidget`, arquivos `.qss`.
-3. Faça o **mapa** do programa e mostre ao usuário (tabela curta):
-   - **Telas**: cada janela/aba/diálogo, o arquivo e o que faz.
-   - **Motor**: o que NÃO é tela (cálculos, banco, leitura de PDF/Excel, regras). Isso fica.
-   - **Regras presas nas telas**: validações, `if` de permissão, montagem de listas escritas
-     dentro dos `QWidget`. Isso será recortado para `servicos/` sem mudar o comportamento.
-   - **Regras escondidas nos widgets**: `setMaximum`/`setMinimum`, casas decimais, `setMaxLength`,
-     máscaras de entrada, itens fixos de `QComboBox`. São regras também: vão para o Python.
-   - **Onde ficam os dados**: como o motor acha o banco/arquivos (variável de ambiente, caminho
-     montado com `__file__`, config). Isso decide como isolar os testes (ver 05, Passo 2).
+1. `git status` e `git log -5`. Se não for repositório git, sugira `git init` e um commit inicial
+   **antes** de tudo.
+2. Descubra a tecnologia atual: `PyQt6`, `PySide6`, `qtpy`, `tkinter`, `.ui`, `QMainWindow`, `.qss`.
+3. Faça o **mapa** e mostre ao usuário (tabela curta):
+   - **Telas**: cada janela/aba/diálogo, o arquivo e o que faz. Cada uma vira um **módulo** do menu
+     ou uma janela dentro de um módulo.
+   - **Motor**: o que NÃO é tela (cálculos, banco, leitura de PDF/Excel, regras). Será copiado.
+   - **Regras presas nas telas**: validações, `if` de permissão, montagem de listas dentro dos
+     `QWidget`. Vão para `backend/servicos/` sem mudar o comportamento.
+   - **Regras escondidas nos widgets**: `setMaximum`, casas decimais, `setMaxLength`, máscaras,
+     itens fixos de `QComboBox`. Também são regras: vão para o Python.
+   - **Onde ficam os dados**: como o motor acha o banco/arquivos (variável, caminho com
+     `__file__`, config). Decide como isolar a base de teste.
    - **Coisas do Windows**: escolher pasta, salvar arquivo, abrir arquivo, impressão.
-4. Procure testes existentes. Se não houver, anote 3–5 comportamentos-chave para conferir depois
+4. Procure testes. Se não houver, anote 3–5 comportamentos-chave para conferir depois
    (ex.: "importar o arquivo X dá 42 linhas e total 1.234,56").
 
 ### Fase 2 · Entrevista
-5. Faça a entrevista de [02-entrevista.md](02-entrevista.md), **em blocos curtos** (no máximo
-   3–4 perguntas por vez), sempre com a sua recomendação e as imagens de exemplo.
-6. Registre as respostas num arquivo do projeto (`docs/visual.md` ou similar). Ele vira a
-   "receita" da cirurgia e serve para as próximas sessões.
+5. Faça a entrevista de [02-entrevista.md](02-entrevista.md) em blocos curtos (3–4 perguntas por
+   vez), sempre com a sua recomendação. Ela é sobre **módulos, telas e o que é particular deste
+   sistema** — a aparência já está decidida (é a do Plus).
+6. Registre as respostas em `docs/visual.md` do projeto, incluindo a seção
+   "Diferenças em relação ao Plus" (mesmo que vazia).
 
 ### Fase 3 · Plano
-7. Monte o plano na ordem abaixo e peça **um** "ok" ao usuário:
-   1. Esqueleto: copiar `modelo/` para o projeto, aplicar as cores escolhidas, abrir a janela.
-   2. Entrada (login), se houver.
-   3. Janela principal: menu lateral com as seções/telas do mapa, busca Ctrl+K.
-   4. Uma tela por vez, da mais usada para a menos usada.
-   5. Instalador ([11-instalador.md](11-instalador.md)).
-   Para cada tela: qual modelo de [09-telas.md](09-telas.md) ela segue.
+7. Monte o plano nesta ordem e peça **um** "ok":
+   1. Esqueleto: a versão nova numa pasta própria (como o Plus fez), a partir de `modelo/`, com o
+      nome do sistema, a base de teste e a janela abrindo.
+   2. Motor copiado para `backend/motor/` e testes do motor passando.
+   3. Entrada (login) e janela principal com os módulos no menu.
+   4. Um módulo por vez, do mais usado para o menos usado.
+   5. Instalador, quando o usuário pedir ([11-instalador.md](11-instalador.md)).
 
 ### Fase 4 · Execução
-8. **Copie o modelo, não reescreva.** `modelo/backend` e `modelo/frontend` são o ponto de
-   partida. Troque nomes, cores e telas de exemplo pelas do usuário.
-9. Motor antigo → **fica onde está** (o programa antigo continua usando). A casca só importa:
-   `backend/app.py` já põe a raiz do projeto no `sys.path`.
-   Regra presa em tela Qt → função em `backend/servicos/` (mesmo comportamento).
-   Cada assunto → uma porta fina em `backend/api/` → uma função em `frontend/src/api/`.
-10. Cada tela nova: use as peças de [08-componentes.md](08-componentes.md). Não invente peça
-    nova se uma do kit resolve. Peça nova segue os tokens ([07-cores-e-medidas.md](07-cores-e-medidas.md)).
-11. A cada tela pronta: confira contra o programa antigo (mesmos dados → mesmo resultado),
-    mostre ao usuário (foto da tela, por print ou pelo `npm run fotos` adaptado) e faça
-    **commit** ("feat: tela X na casca nova").
-12. Só apague o código Qt de uma tela depois que a nova estiver conferida. O programa antigo
-    continua sendo o oficial até a nova versão estar completa.
+8. **Copie o modelo, não reescreva.** E nunca edite os arquivos que são cópia do Plus
+   (lista em [01-o-padrao.md](01-o-padrao.md#arquivos-que-são-cópia-do-plus)).
+9. Motor antigo → **cópia** em `backend/motor/`, mudando o mínimo (só imports, se precisar).
+   O sistema antigo continua intocado na pasta dele e é o oficial até a versão nova estar pronta.
+   Regra presa em tela Qt → função em `backend/servicos/` (mesmo comportamento e mensagens).
+10. Cada tela nova: um módulo em `frontend/src/rotas/<modulo>/Tela<Nome>.tsx`, montado com as
+    peças de [08-componentes.md](08-componentes.md) e um dos modelos de [09-telas.md](09-telas.md).
+11. A cada módulo pronto: confira contra o sistema antigo (mesmos dados → mesmo resultado),
+    mostre ao usuário (foto) e faça **commit** ("feat: módulo X na casca do Plus").
+12. Só apague o código Qt quando a versão nova estiver completa e conferida na base de teste.
 
 ### Fase 5 · Conferência e entrega
-13. Rode a lista de [12-conferencia.md](12-conferencia.md).
-14. Pergunte se o usuário quer o instalador agora; se sim, gere ([11](11-instalador.md)).
-    Gerar não é publicar: instalar nas máquinas dos outros só com pedido explícito.
+13. Rode a lista de [12-conferencia.md](12-conferencia.md), incluindo a parte "Igual ao Plus".
+14. Pergunte se o usuário quer o instalador agora. Gerar não é publicar: instalar nas máquinas do
+    escritório só com pedido explícito.
 
 ## Nunca faça
 
-- Mudar regra de negócio "aproveitando a viagem". Achou um erro na regra? Anote e pergunte.
-- Usar cor, raio ou sombra soltos (`#3a7`, `rounded-[13px]`, `shadow-lg`) em vez dos tokens.
+- Mudar regra de negócio "aproveitando a viagem". Achou erro na regra? Anote e pergunte.
+- Editar um arquivo que é cópia do Plus, ou criar um "jeito próprio" de algo que o Plus já tem.
+- Inventar cor, canto, sombra ou animação. Copie as classes do Plus/kit.
 - Deixar ação falhar calada: todo erro e todo "não pode" vira um balão com o motivo.
-- Abrir o programa da pessoa apontando para os **dados reais** dela durante os testes. Use uma
-  cópia. ⚠ `MEU_SISTEMA_DADOS` só separa a pasta **da casca** (trava, porta, WebView); os dados
-  do **motor** precisam do isolamento dele (variável própria ou config apontando para a cópia).
-- Publicar, enviar ou instalar nas máquinas dos outros sem pedido explícito do usuário.
+- Testar na base oficial. Use a base fictícia (`scripts\ABRIR_*.bat ficticia`); pelo código o
+  `app.py` nem abre sem a variável de teste.
+- Publicar atualização ou instalar nos computadores do escritório sem pedido explícito.
 - Colocar dados de clientes, senhas ou `.env` no git.
 
 ## Mapa deste kit
 
 | Pasta / arquivo | Para quê |
 |---|---|
-| [01-postura.md](01-postura.md) | Como se comportar: sem criar dificuldades, com a prova dos 2 dias |
-| [02-entrevista.md](02-entrevista.md) | As perguntas, com opções, recomendações e imagens |
-| [03-stack.md](03-stack.md) | Bibliotecas, versões e o que não usar |
+| [01-o-padrao.md](01-o-padrao.md) | O que é obrigatório, o que pode variar e a postura |
+| [02-entrevista.md](02-entrevista.md) | As perguntas: módulos, telas e particularidades |
+| [03-stack.md](03-stack.md) | Bibliotecas e versões (as do Plus) |
 | [04-arquitetura.md](04-arquitetura.md) | Como Python, janela e telas se ligam |
 | [05-migrar-do-pyqt.md](05-migrar-do-pyqt.md) | O passo a passo da troca, peça por peça |
-| [06-principios.md](06-principios.md) | A linguagem visual em regras curtas |
-| [07-cores-e-medidas.md](07-cores-e-medidas.md) | Tokens, tipografia, medidas, estilos prontos |
+| [06-principios.md](06-principios.md) | A linguagem visual do Plus em regras curtas |
+| [07-cores-e-medidas.md](07-cores-e-medidas.md) | As cores e medidas do Plus |
 | [08-componentes.md](08-componentes.md) | Catálogo de peças com imagem e uso |
 | [09-telas.md](09-telas.md) | Modelos de tela e como montar cada um |
-| [10-animacoes.md](10-animacoes.md) | Molas, tempos, o que animar |
-| [11-instalador.md](11-instalador.md) | Do código ao instalador `.exe` |
+| [10-animacoes.md](10-animacoes.md) | As animações do Plus |
+| [11-instalador.md](11-instalador.md) | Scripts de abrir, `.exe` e instalador |
 | [12-conferencia.md](12-conferencia.md) | Lista final antes de entregar |
-| `../modelo/` | O sistema-esqueleto que roda (copie daqui) |
-| `../estilos-prontos/` | 4 conjuntos de cores/medidas prontos |
-| `../imagens/` | Fotos (claro/escuro), estilos e animações em GIF |
+| `../modelo/` | O esqueleto que roda, no formato do Plus (copie daqui) |
+| `../imagens/` | Fotos (claro/escuro) e GIFs das animações |
